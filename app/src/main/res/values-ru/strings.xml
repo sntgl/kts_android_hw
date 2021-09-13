@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KTS ДЗ</string>
+    <string name="hi">Привет!</string>
+    <string name="change_color">Поменять цвет</string>
+    <string name="a_hand">Рука</string>
+</resources>
