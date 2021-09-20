@@ -3,55 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<!--    <LinearLayout-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        android:orientation="vertical">-->
-<!--        <ImageView-->
-<!--            android:id="@+id/hand"-->
-<!--            android:contentDescription="@string/a_hand"-->
-<!--            android:layout_width="200dp"-->
-<!--            android:layout_height="200dp"-->
-<!--            android:src="@drawable/hand"-->
-<!--            app:tint="@color/black"-->
-<!--            android:padding="10dp"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintLeft_toLeftOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            />-->
-<!--        <TextView-->
-<!--            android:id="@+id/hi"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/hand"-->
-<!--            app:layout_constraintLeft_toLeftOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            android:textSize="40sp"-->
-<!--            android:padding="5dp"-->
-<!--            android:layout_margin="5dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:text="@string/hi"-->
-<!--            tools:text="Test"/>-->
-<!--        <Button-->
-<!--            android:id="@+id/start_button"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/hi"-->
-<!--            app:layout_constraintLeft_toLeftOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            android:padding="5dp"-->
-<!--            android:layout_margin="5dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:text="@string/change_color"-->
-<!--            tools:text="Test"/>-->
-<!--    </LinearLayout>-->
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
         android:layout_width="match_parent"
