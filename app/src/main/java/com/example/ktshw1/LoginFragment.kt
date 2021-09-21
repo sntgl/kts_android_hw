@@ -3,7 +3,6 @@ package com.example.ktshw1
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -27,11 +26,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         pass = view.findViewById(R.id.password_field)
         loginBtn = view.findViewById(R.id.login_button)
         updateButton()
+        bindFields()
+    }
 
+    private fun bindFields() {
+        //Password field
         pass?.setOnEditorActionListener { _, actionId, _ ->
             checkPassError()
             //Автоматическое нажатие на кнопки при валидном вводе+нажатии Enter
-            if (actionId == EditorInfo.IME_ACTION_GO && passValid && emailValid) {
+            if (passValid && emailValid) {
                 loginBtn?.performClick()
             }
             return@setOnEditorActionListener (passLayout?.isErrorEnabled ?: false)
@@ -40,7 +43,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             if (!hasFocus)
                 checkPassError()
         }
-
+        //Email field
         email?.setOnEditorActionListener { _, _, _ ->
             checkEmailError()
             return@setOnEditorActionListener (emailLayout?.isErrorEnabled ?: false)
@@ -49,7 +52,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             if (!hasFocus)
                 checkEmailError()
         }
-
+        //Login field
         loginBtn?.setOnClickListener {
             updateButton()
             val checkPass: Boolean = checkPassError()

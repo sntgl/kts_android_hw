@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import timber.log.Timber
 
 class AppViewModel(state: SavedStateHandle): ViewModel() {
-//    private var onBoardingPassed: Boolean = false
+    //Тк состояние логина восстанавливается самостоятельно,
+    //добавил VM больше для реализации в будущем
     private val savedStateHandle = state
     fun isOnBoardingPassed(): Boolean{
         Timber.d("onb got ${ savedStateHandle.get(ON_BOARDING_KEY)?: false}")
