@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KTS HW</string>
+    <string name="hi">Hi!</string>
+    <string name="change_color">Change color</string>
+    <string name="a_hand">A hand</string>
+</resources>
