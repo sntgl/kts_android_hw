@@ -31,7 +31,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun bindFields() {
         //Password field
-        pass?.setOnEditorActionListener { _, actionId, _ ->
+        pass?.setOnEditorActionListener { _, _, _ ->
             checkPassError()
             //Автоматическое нажатие на кнопки при валидном вводе+нажатии Enter
             if (passValid && emailValid) {
