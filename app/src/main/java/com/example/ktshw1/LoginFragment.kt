@@ -91,6 +91,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             loginBtn?.alpha = 0.5F
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        pass = null
+        email = null
+        passLayout = null
+        emailLayout = null
+        loginBtn = null
+    }
+
     companion object {
         private const val PASSWORD_MIN_LENGTH: Int = 8
     }
