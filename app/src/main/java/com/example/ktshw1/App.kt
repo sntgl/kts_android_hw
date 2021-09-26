@@ -3,9 +3,10 @@ package com.example.ktshw1
 import android.app.Application
 import timber.log.Timber
 
-class App: Application() {
+class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        Timber.plant(Timber.DebugTree())
+        if (BuildConfig.DEBUG)
+            Timber.plant(Timber.DebugTree())
     }
 }

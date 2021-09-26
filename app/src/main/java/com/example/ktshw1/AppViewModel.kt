@@ -3,20 +3,18 @@ package com.example.ktshw1
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
-class AppViewModel(private val state: SavedStateHandle) : ViewModel() {
-    //дефолт true для того, чтобы при первом запуске не было ошибок
-    private var loginEmailValidMutable = MutableLiveData(false)
+class AppViewModel() : ViewModel() {
+    private val loginEmailValidMutable = MutableLiveData(false)
     val loginEmailValid: LiveData<Boolean>
         get() = loginEmailValidMutable
 
-    private var loginPassValidMutable = MutableLiveData(false)
+    private val loginPassValidMutable = MutableLiveData(false)
     val loginPassValid: LiveData<Boolean>
         get() = loginPassValidMutable
 
-    private var loginValidMutable = MutableLiveData(false)
+    private val loginValidMutable = MutableLiveData(false)
     val loginState: LiveData<Boolean>
         get() = loginValidMutable
 
