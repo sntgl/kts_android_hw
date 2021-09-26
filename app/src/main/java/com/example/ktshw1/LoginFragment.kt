@@ -66,7 +66,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val err: Boolean = textLength < PASSWORD_MIN_LENGTH
         passLayout?.isErrorEnabled = err
         if (err)
-            passLayout?.error = getString(R.string.min_length_warning)
+            passLayout?.error = getString(R.string.login_min_length_warning)
         passValid = !err
         updateButton()
         return err
@@ -77,7 +77,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val err: Boolean = !Patterns.EMAIL_ADDRESS.matcher(text).matches()
         emailLayout?.isErrorEnabled = err
         if (err)
-            emailLayout?.error = getString(R.string.email_warning)
+            emailLayout?.error = getString(R.string.login_email_warning)
         emailValid = !err
         updateButton()
         return err

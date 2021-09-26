@@ -33,7 +33,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:textSize="20sp"
-        android:text="@string/email"/>
+        android:text="@string/login_email"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email_field_layout"
@@ -47,7 +47,7 @@
         android:layout_margin="20dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email_field"
-            android:hint="@string/enter_your_email"
+            android:hint="@string/login_enter_your_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
@@ -63,7 +63,7 @@
         app:layout_constraintBottom_toTopOf="@id/password_field_layout"
         app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
         android:textSize="20sp"
-        android:text="@string/password"
+        android:text="@string/login_password"
         />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -80,7 +80,7 @@
         app:endIconMode="password_toggle"
         >
         <com.google.android.material.textfield.TextInputEditText
-            android:hint="@string/enter_your_password"
+            android:hint="@string/login_enter_your_password"
             android:id="@+id/password_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
         app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
         app:layout_constraintRight_toRightOf="@id/guideline_w_end"
         app:layout_constraintBottom_toBottomOf="@id/guideline_h_bot"
-        android:text="@string/login"/>
+        android:text="@string/login_login"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_h_top"

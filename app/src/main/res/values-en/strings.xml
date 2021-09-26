@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BReddit</string>
-    <string name="hi">Welcome to BReddit!</string>
-    <string name="change_color">Start</string>
-    <string name="a_hand">Hi hand</string>
-    <string name="password">Password</string>
-    <string name="login">Login</string>
-    <string name="email">Email</string>
-    <string name="min_length_warning">Required length - 8 symbols</string>
-    <string name="email_warning">Is not email!</string>
-    <string name="russian_reddit_client">Russian reddit client</string>
-    <string name="enter_your_email">Enter your email…</string>
-    <string name="enter_your_password">Enter your password…</string>
+    <string name="onboarding_hi">Welcome to BReddit!</string>
+    <string name="onboarding_start">Start</string>
+    <string name="onboarding_hand">Hi hand</string>
+    <string name="login_password">Password</string>
+    <string name="login_login">Login</string>
+    <string name="login_email">Email</string>
+    <string name="login_min_length_warning">Required length - 8 symbols</string>
+    <string name="login_email_warning">Is not email!</string>
+    <string name="onboarding_description">Russian reddit client</string>
+    <string name="login_enter_your_email">Enter your email…</string>
+    <string name="login_enter_your_password">Enter your password…</string>
 </resources>
