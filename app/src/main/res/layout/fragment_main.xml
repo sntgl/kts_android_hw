@@ -4,29 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginFragment"
-    android:padding="40dp"
     android:background="@color/background_main"
-    >
+    android:padding="40dp"
+    tools:context=".LoginFragment">
 
     <TextView
         android:id="@+id/login_app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textSize="40sp"
         android:layout_marginTop="40dp"
+        android:text="@string/app_name"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
-    />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_baseline_article_24"
-        />
-
-
+        android:src="@drawable/ic_baseline_article_24" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

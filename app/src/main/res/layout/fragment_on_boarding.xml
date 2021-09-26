@@ -7,71 +7,57 @@
     android:background="@color/background_main"
     tools:context=".OnBoardingFragment">
 
-        <ImageView
-            android:id="@+id/hand"
-            app:layout_constraintWidth_percent="0.4"
-            app:layout_constraintHeight_percent="0.4"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:contentDescription="@string/a_hand"
-            android:padding="10dp"
-            android:src="@drawable/hand"
-            app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
-            app:layout_constraintRight_toRightOf="@id/guideline_w_end"
-            app:layout_constraintTop_toTopOf="@id/guideline_h_top"
+    <ImageView
+        android:id="@+id/hand"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:contentDescription="@string/a_hand"
+        android:padding="10dp"
+        android:src="@drawable/hand"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
+        app:layout_constraintRight_toRightOf="@id/guideline_w_end"
 
-            android:layout_height="0dp"
-            android:layout_width="0dp"/>
+        app:layout_constraintTop_toTopOf="@id/guideline_h_top"
+        app:layout_constraintWidth_percent="0.4" />
 
-        <TextView
-            android:id="@+id/hi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/hi"
-            android:textSize="25sp"
-            app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
-            app:layout_constraintRight_toRightOf="@id/guideline_w_end"
-            app:layout_constraintBottom_toTopOf="@id/hi_description"/>
-        <TextView
-            android:id="@+id/hi_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/russian_reddit_client"
-            app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
-            app:layout_constraintRight_toRightOf="@id/guideline_w_end"
-            app:layout_constraintBottom_toTopOf="@id/start_button"
-            android:alpha="0.7"/>
+    <TextView
+        android:id="@+id/hi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:text="@string/hi"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@id/hi_description"
+        app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
+        app:layout_constraintRight_toRightOf="@id/guideline_w_end" />
 
-        <Button
-            android:id="@+id/start_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/change_color"
-            app:layout_constraintBottom_toBottomOf="@id/guideline_h_bot"
-            app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
-            app:layout_constraintRight_toRightOf="@id/guideline_w_end" />
+    <TextView
+        android:id="@+id/hi_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.7"
+        android:text="@string/russian_reddit_client"
+        app:layout_constraintBottom_toTopOf="@id/start_button"
+        app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
+        app:layout_constraintRight_toRightOf="@id/guideline_w_end" />
 
+    <Button
+        android:id="@+id/start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:text="@string/change_color"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_h_bot"
+        app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
+        app:layout_constraintRight_toRightOf="@id/guideline_w_end" />
 
-
-<!--    <androidx.constraintlayout.widget.Guideline-->
-<!--        android:id="@+id/guideline2"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        app:layout_constraintGuide_percent="0.77" />-->
-
-<!--    <androidx.constraintlayout.widget.Guideline-->
-<!--        android:id="@+id/guideline1"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        app:layout_constraintGuide_percent="0.16" />-->
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_h_top"
@@ -92,13 +78,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.9"  />
+        app:layout_constraintGuide_percent="0.9" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_w_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.9"  />
+        app:layout_constraintGuide_percent="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
