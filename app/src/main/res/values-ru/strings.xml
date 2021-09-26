@@ -14,4 +14,5 @@
     <string name="login_enter_your_password">Введите ваш пароль…</string>
     <string name="feed_interpoint">·</string>
     <string name="feed_more">···</string>
+    <string name="vote_now">Голосуй!</string>
 </resources>

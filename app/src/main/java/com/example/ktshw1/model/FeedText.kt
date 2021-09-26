@@ -8,6 +8,6 @@ data class FeedText (
     val userName: String,
     val datePublished: Int,
     val title: String,
-    val vote: Vote = Vote.NOT_VOTED,
+    var vote: Vote = Vote.NOT_VOTED,
     val voteCounter: Int?,
 )
