@@ -1,10 +1,12 @@
 package com.example.ktshw1
 
 import android.os.Bundle
-import android.util.Patterns
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -15,8 +17,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private var emailLayout: TextInputLayout? = null
     private var passLayout: TextInputLayout? = null
     private var loginBtn: Button? = null
-    private var passValid = false
-    private var emailValid = false
+    val model: AppViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -25,70 +26,51 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         email = view.findViewById(R.id.email_field)
         pass = view.findViewById(R.id.password_field)
         loginBtn = view.findViewById(R.id.login_button)
-        updateButton()
         bindFields()
     }
 
     private fun bindFields() {
-        //Password field
-        pass?.setOnEditorActionListener { _, _, _ ->
-            checkPassError()
-            //Автоматическое нажатие на кнопки при валидном вводе+нажатии Enter
-            if (passValid && emailValid) {
-                loginBtn?.performClick()
+        pass?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                model.onEditPass(s.toString())
             }
-            return@setOnEditorActionListener (passLayout?.isErrorEnabled ?: false)
-        }
-        pass?.setOnFocusChangeListener {_, hasFocus ->
-            if (!hasFocus)
-                checkPassError()
-        }
-        //Email field
-        email?.setOnEditorActionListener { _, _, _ ->
-            checkEmailError()
-            return@setOnEditorActionListener (emailLayout?.isErrorEnabled ?: false)
-        }
-        email?.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus)
-                checkEmailError()
-        }
-        //Login field
+        })
+        email?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                model.onEditEmail(s.toString())
+            }
+        })
+        model.loginEmailValid.observe(viewLifecycleOwner, { valid ->
+            emailLayout?.isErrorEnabled = !valid
+            if (!valid)
+                emailLayout?.error = getString(R.string.login_email_warning)
+        })
+        model.loginPassValid.observe(viewLifecycleOwner, { valid ->
+            passLayout?.isErrorEnabled = !valid
+            if (!valid)
+                passLayout?.error = getString(R.string.login_min_length_warning)
+        })
+        model.loginState.observe(viewLifecycleOwner, { valid ->
+            if (valid)
+                loginBtn?.alpha = 1.0F
+            else
+                loginBtn?.alpha = 0.5F
+        })
         loginBtn?.setOnClickListener {
-            updateButton()
-            val checkPass: Boolean = checkPassError()
-            if (!checkEmailError() && !checkPass)
+            if (model.loginState.value == true)
                 findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
         }
-    }
-
-    private fun checkPassError(): Boolean {
-        val textLength: Int = pass?.text!!.length
-        val err: Boolean = textLength < PASSWORD_MIN_LENGTH
-        passLayout?.isErrorEnabled = err
-        if (err)
-            passLayout?.error = getString(R.string.login_min_length_warning)
-        passValid = !err
-        updateButton()
-        return err
-    }
-
-    private fun checkEmailError(): Boolean {
-        val text = email?.text.toString()
-        val err: Boolean = !Patterns.EMAIL_ADDRESS.matcher(text).matches()
-        emailLayout?.isErrorEnabled = err
-        if (err)
-            emailLayout?.error = getString(R.string.login_email_warning)
-        emailValid = !err
-        updateButton()
-        return err
-    }
-    
-    private fun updateButton() {
-        //Нажимаемой оставил специально - чтобы можно было посмотреть подсказки
-        if (emailValid && passValid)
-            loginBtn?.alpha = 1.0F
-        else
-            loginBtn?.alpha = 0.5F
+        //Автоматическое нажатие на кнопки при валидном вводе+нажатии Enter
+        pass?.setOnEditorActionListener { _, _, _ ->
+            if (model.loginState.value == true) {
+                loginBtn?.performClick()
+            }
+            return@setOnEditorActionListener (model.loginState.value != true)
+        }
     }
 
     override fun onDestroyView() {
@@ -98,9 +80,5 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         passLayout = null
         emailLayout = null
         loginBtn = null
-    }
-
-    companion object {
-        private const val PASSWORD_MIN_LENGTH: Int = 8
     }
 }
