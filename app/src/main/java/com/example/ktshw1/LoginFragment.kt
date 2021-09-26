@@ -8,10 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.example.ktshw1.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
-    private var passValid = false
-    private var emailValid = false
     val model: AppViewModel by viewModels()
     private val binding: FragmentLoginBinding by viewBinding(FragmentLoginBinding::bind)
 
@@ -21,6 +20,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun bindFields() {
+        // Обновление ViewModel при изменении полей pass/email
         binding.passwordField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -35,30 +35,33 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 model.onEditEmail(s.toString())
             }
         })
+        // Изменение ошибок при изменении ViewModel
         model.loginEmailValid.observe(viewLifecycleOwner, { valid ->
-            emailLayout?.isErrorEnabled = !valid
+            binding.emailFieldLayout.isErrorEnabled = !valid
             if (!valid)
-                emailLayout?.error = getString(R.string.login_email_warning)
+                binding.emailFieldLayout.error = getString(R.string.login_email_warning)
         })
         model.loginPassValid.observe(viewLifecycleOwner, { valid ->
-            passLayout?.isErrorEnabled = !valid
+            binding.passwordFieldLayout.isErrorEnabled = !valid
             if (!valid)
-                passLayout?.error = getString(R.string.login_min_length_warning)
+                binding.passwordFieldLayout.error = getString(R.string.login_min_length_warning)
         })
+        // Изменение прозрачности кнопки навигации при изменении ViewModel
         model.loginState.observe(viewLifecycleOwner, { valid ->
             if (valid)
-                loginBtn?.alpha = 1.0F
+                binding.loginButton.alpha = 1.0F
             else
-                loginBtn?.alpha = 0.5F
+                binding.loginButton.alpha = 0.5F
         })
+        // Навигация с фрагмента
         binding.loginButton.setOnClickListener {
             if (model.loginState.value == true)
                 findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
         }
-        //Автоматическое нажатие на кнопки при валидном вводе+нажатии Enter
+        // Автоматическое нажатие на кнопки при валидном вводе+нажатии Enter
         binding.passwordField.setOnEditorActionListener { _, _, _ ->
             if (model.loginState.value == true) {
-                loginBtn?.performClick()
+                binding.loginButton.performClick()
             }
             return@setOnEditorActionListener (model.loginState.value != true)
         }

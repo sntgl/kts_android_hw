@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:textSize="16sp"
-        android:text="@string/interpoint"
+        android:text="@string/feed_interpoint"
         app:layout_constraintTop_toTopOf="@id/user_name"
         app:layout_constraintBottom_toBottomOf="@id/user_name"
         app:layout_constraintLeft_toRightOf="@id/user_name"/>
@@ -82,7 +82,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/more"
+        android:text="@string/feed_more"
         android:textStyle="bold"
         android:padding="5dp"
         android:textSize="16sp"
