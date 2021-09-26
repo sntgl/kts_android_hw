@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">KTS HW</string>
-    <string name="hi">Hi!</string>
-    <string name="change_color">Change color</string>
-    <string name="a_hand">A hand</string>
+    <string name="app_name">BReddit</string>
+    <string name="onboarding_hi">Welcome to BReddit!</string>
+    <string name="onboarding_start">Start</string>
+    <string name="onboarding_hand">Hi hand</string>
+    <string name="login_password">Password</string>
+    <string name="login_login">Login</string>
+    <string name="login_email">Email</string>
+    <string name="login_min_length_warning">Required length - 8 symbols</string>
+    <string name="login_email_warning">Is not email!</string>
+    <string name="onboarding_description">Russian reddit client</string>
+    <string name="login_enter_your_email">Enter your email…</string>
+    <string name="login_enter_your_password">Enter your password…</string>
 </resources>
