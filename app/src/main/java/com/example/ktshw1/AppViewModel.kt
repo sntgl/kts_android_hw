@@ -14,7 +14,8 @@ class AppViewModel() : ViewModel() {
     val loginPassValid: LiveData<Boolean>
         get() = loginPassValidMutable
 
-    private val loginValidMutable = MutableLiveData(false)
+    //TODO поменять true на false, для тестирования
+    private val loginValidMutable = MutableLiveData(true)
     val loginState: LiveData<Boolean>
         get() = loginValidMutable
 

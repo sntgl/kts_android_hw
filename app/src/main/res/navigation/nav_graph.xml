@@ -18,9 +18,9 @@
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.ktshw1.MainFragment"
+        android:name="com.example.ktshw1.FeedFragment"
         android:label="MainFragment"
-        tools:layout="@layout/fragment_main"/>
+        tools:layout="@layout/fragment_feed"/>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.ktshw1.LoginFragment"
