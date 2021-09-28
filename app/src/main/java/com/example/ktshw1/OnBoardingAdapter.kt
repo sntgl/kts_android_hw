@@ -1,11 +1,10 @@
 package com.example.ktshw1
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_onboarding_feature.view.*
+import com.example.ktshw1.databinding.ItemOnboardingFeatureBinding
 
 class OnBoardingAdapter :
     RecyclerView.Adapter<OnBoardingAdapter.PagerVH>() {
@@ -27,24 +26,32 @@ class OnBoardingAdapter :
     )
 
     override fun getItemCount(): Int {
-        return data.size//TODO
+        return data.size
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerVH =
         PagerVH(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_onboarding_feature, parent, false)
+            ItemOnboardingFeatureBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
         )
 
     override fun onBindViewHolder(holder: PagerVH, position: Int) {
-        with (holder.itemView) {
-            item_onboarding_image.setImageResource(data[position].drawable)
-            item_onboarding_text.text = data[position].text
-        }
+        holder.bind(data[position])
     }
 
 
-    class PagerVH(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class PagerVH(private val binding: ItemOnboardingFeatureBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(model: PagerModel) {
+            with(binding) {
+                itemOnboardingImage.setImageResource(model.drawable)
+                itemOnboardingText.text = model.text
+            }
+        }
+    }
+
     data class PagerModel(
         @DrawableRes
         val drawable: Int,
