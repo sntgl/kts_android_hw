@@ -9,8 +9,7 @@ import com.example.ktshw1.model.*
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import kotlinx.android.extensions.LayoutContainer
 
-class FeedLoadDelegate(
-) : AbsListItemAdapterDelegate<Any, Any, FeedLoadDelegate.ViewHolder>() {
+class FeedLoadDelegate: AbsListItemAdapterDelegate<Any, Any, FeedLoadDelegate.ViewHolder>() {
 
     override fun isForViewType(item: Any, items: MutableList<Any>, position: Int): Boolean {
         return item is FeedLoading

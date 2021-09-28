@@ -81,7 +81,7 @@ class FeedItemDelegate(
 
 
         private fun setVoteCount() {
-            containerView.item_feed_vote_counter.text =  if (feedItem?.voteCounter != null) {
+            containerView.item_feed_vote_counter.text = if (feedItem?.voteCounter != null) {
                 val count = feedItem?.voteCounter ?: 0
                 when (feedItem?.vote) {
                     Vote.UP -> count + 1
@@ -93,10 +93,11 @@ class FeedItemDelegate(
                 containerView.context.getString(R.string.vote_now)
         }
 
-        fun setButtonColors() {
+        private fun setButtonColors() {
             @ColorRes
             val upButtonColor = if (feedItem?.vote == Vote.UP) R.color.vote
             else R.color.black
+
             @ColorRes
             val downButtonColor = if (feedItem?.vote == Vote.DOWN) R.color.vote
             else R.color.black

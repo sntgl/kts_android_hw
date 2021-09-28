@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.example.ktshw1.model.FeedItem
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 
-class ListDelegatesAdapter ()
+class ListDelegatesAdapter
     : AsyncListDifferDelegationAdapter<Any>(DiffCallback()) {
 
     init {
