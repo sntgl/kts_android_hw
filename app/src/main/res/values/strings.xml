@@ -16,4 +16,5 @@
     <string name="feed_more">···</string>
     <string name="vote_now">Vote now!</string>
     <string name="auth_canceled">Login failed!</string>
+    <string name="reddit_base_url" translatable="false">https://oauth.reddit.com/</string>
 </resources>
