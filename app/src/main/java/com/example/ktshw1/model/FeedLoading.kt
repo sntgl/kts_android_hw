@@ -1,3 +1,7 @@
 package com.example.ktshw1.model
 
-class FeedLoading
+import java.util.*
+
+data class FeedLoading(
+    val id: UUID = UUID.randomUUID()
+)

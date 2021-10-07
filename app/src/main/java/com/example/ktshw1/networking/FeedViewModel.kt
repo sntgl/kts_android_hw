@@ -68,7 +68,9 @@ class FeedViewModel: ViewModel() {
     }
 
     private fun getLastSubreddit(): String {
-        return (feedLiveData.value?.dropLast(1)?.last() as Subreddit).id
+        val woLast = feedLiveData.value?.dropLast(1) ?: emptyList()
+        return if (woLast.isNotEmpty() && woLast.last() is Subreddit)
+            (woLast.last() as Subreddit).id else ""
     }
 
     private fun postLoading(l: List<*>?) {
