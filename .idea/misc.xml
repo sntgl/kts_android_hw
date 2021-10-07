@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_article_24.xml" value="0.10648148148148148" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1574074074074074" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_auth.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_feed.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.335" />

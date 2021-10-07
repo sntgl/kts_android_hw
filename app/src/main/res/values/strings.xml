@@ -15,4 +15,5 @@
     <string name="feed_interpoint">·</string>
     <string name="feed_more">···</string>
     <string name="vote_now">Vote now!</string>
+    <string name="auth_canceled">Login failed!</string>
 </resources>
