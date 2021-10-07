@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_on_boarding" >
         <action
             android:id="@+id/action_onBoardingFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
+            app:destination="@id/authFragment"
             app:popUpTo="@id/onBoardingFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -22,14 +22,14 @@
         android:label="MainFragment"
         tools:layout="@layout/fragment_feed"/>
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.ktshw1.LoginFragment"
-        android:label="MainFragment"
-        tools:layout="@layout/fragment_login">
+        android:id="@+id/authFragment"
+        android:name="com.example.ktshw1.AuthFragment"
+        android:label="AuthFragment"
+        tools:layout="@layout/fragment_auth">
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
             app:destination="@id/mainFragment"
-            app:popUpTo="@id/loginFragment"
+            app:popUpTo="@id/authFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

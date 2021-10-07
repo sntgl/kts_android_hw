@@ -12,6 +12,7 @@ import com.example.ktshw1.feed.ListDelegatesAdapter
 import com.example.ktshw1.model.*
 import timber.log.Timber
 import java.util.*
+import com.example.ktshw1.utils.autoCleared
 
 class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val binding: FragmentFeedBinding by viewBinding(FragmentFeedBinding::bind)
@@ -22,6 +23,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         super.onViewCreated(view, savedInstanceState)
         createRecycler()
         loadMoreItems()
+        Timber.d("Auth token is ${UserInfo.authToken}")
     }
 
     private fun createRecycler() {
