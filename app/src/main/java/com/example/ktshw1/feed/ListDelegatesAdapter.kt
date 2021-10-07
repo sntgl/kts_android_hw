@@ -3,6 +3,8 @@ package com.example.ktshw1.feed
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import com.example.ktshw1.model.FeedItem
+import com.example.ktshw1.model.FeedLoading
+import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 
 class ListDelegatesAdapter
@@ -16,7 +18,8 @@ class ListDelegatesAdapter
     class DiffCallback : DiffUtil.ItemCallback<Any>() {
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
             return oldItem.javaClass == newItem.javaClass && when (newItem) {
-                is FeedItem -> newItem.uuid == (oldItem as FeedItem).uuid
+                is Subreddit -> newItem.id == (oldItem as Subreddit).id
+                is FeedLoading -> newItem.id == (oldItem as FeedLoading).id
                 else -> true
             }
         }

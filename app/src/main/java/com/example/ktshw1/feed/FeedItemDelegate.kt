@@ -39,6 +39,7 @@ class FeedItemDelegate(
         private var feedItem: Subreddit? = null
 
         fun bind(item: Subreddit) { //TODO
+            //Glide, Coil, Picasso
             feedItem = item
             with (binding) {
                 itemFeedSubredditImg.setImageResource(R.color.vote)
