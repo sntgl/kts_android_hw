@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class AppViewModel() : ViewModel() {
+class AppViewModel : ViewModel() {
     private val loginEmailValidMutable = MutableLiveData(false)
     val loginEmailValid: LiveData<Boolean>
         get() = loginEmailValidMutable
@@ -19,13 +19,11 @@ class AppViewModel() : ViewModel() {
         get() = loginValidMutable
 
     init {
-        loginPassValid.observeForever{ passValid ->
-            if (passValid && loginEmailValid.value == true)
-                loginValidMutable.value = true
+        loginPassValid.observeForever { passValid ->
+            loginValidMutable.value = passValid && loginEmailValid.value == true
         }
-        loginEmailValid.observeForever{ emailValid ->
-            if (emailValid && loginPassValid.value == true)
-                loginValidMutable.value = true
+        loginEmailValid.observeForever { emailValid ->
+            loginValidMutable.value = emailValid && loginPassValid.value == true
         }
     }
 

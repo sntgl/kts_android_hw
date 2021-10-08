@@ -4,81 +4,56 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.Button
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.example.ktshw1.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
-    private var pass: TextInputEditText? = null
-    private var email: TextInputEditText? = null
-    private var emailLayout: TextInputLayout? = null
-    private var passLayout: TextInputLayout? = null
-    private var loginBtn: Button? = null
     val model: AppViewModel by viewModels()
+    private val binding: FragmentLoginBinding by viewBinding(FragmentLoginBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        emailLayout = view.findViewById(R.id.email_field_layout)
-        passLayout = view.findViewById(R.id.password_field_layout)
-        email = view.findViewById(R.id.email_field)
-        pass = view.findViewById(R.id.password_field)
-        loginBtn = view.findViewById(R.id.login_button)
         bindFields()
     }
 
     private fun bindFields() {
-        pass?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                model.onEditPass(s.toString())
-            }
-        })
-        email?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                model.onEditEmail(s.toString())
-            }
-        })
+        // Обновление ViewModel при изменении полей pass/email
+        binding.passwordField.doAfterTextChanged { model.onEditPass(it.toString()) }
+        binding.emailField.doAfterTextChanged { model.onEditEmail(it.toString()) }
+        // Изменение ошибок при изменении ViewModel
+
         model.loginEmailValid.observe(viewLifecycleOwner, { valid ->
-            emailLayout?.isErrorEnabled = !valid
+            binding.emailFieldLayout.isErrorEnabled = !valid
             if (!valid)
-                emailLayout?.error = getString(R.string.login_email_warning)
+                binding.emailFieldLayout.error = getString(R.string.login_email_warning)
         })
         model.loginPassValid.observe(viewLifecycleOwner, { valid ->
-            passLayout?.isErrorEnabled = !valid
+            binding.passwordFieldLayout.isErrorEnabled = !valid
             if (!valid)
-                passLayout?.error = getString(R.string.login_min_length_warning)
+                binding.passwordFieldLayout.error = getString(R.string.login_min_length_warning)
         })
+        // Изменение прозрачности кнопки навигации при изменении ViewModel
         model.loginState.observe(viewLifecycleOwner, { valid ->
             if (valid)
-                loginBtn?.alpha = 1.0F
+                binding.loginButton.alpha = 1.0F
             else
-                loginBtn?.alpha = 0.5F
+                binding.loginButton.alpha = 0.5F
         })
-        loginBtn?.setOnClickListener {
+        // Навигация с фрагмента
+        binding.loginButton.setOnClickListener {
             if (model.loginState.value == true)
                 findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
         }
-        //Автоматическое нажатие на кнопки при валидном вводе+нажатии Enter
-        pass?.setOnEditorActionListener { _, _, _ ->
+        // Автоматическое нажатие на кнопки при валидном вводе+нажатии Enter
+        binding.passwordField.setOnEditorActionListener { _, _, _ ->
             if (model.loginState.value == true) {
-                loginBtn?.performClick()
+                binding.loginButton.performClick()
             }
             return@setOnEditorActionListener (model.loginState.value != true)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        pass = null
-        email = null
-        passLayout = null
-        emailLayout = null
-        loginBtn = null
     }
 }

@@ -7,6 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background_main">#5C780C31</color>
-    <color name="background_second">#3E114065</color>
+    <color name="background_main">#FFB9D1</color>
+    <color name="background_second">#B4DEFF</color>
+    <color name="vote">#F44336</color>
+
 </resources>

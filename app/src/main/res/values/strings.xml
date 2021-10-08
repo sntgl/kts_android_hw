@@ -12,4 +12,7 @@
     <string name="login_email_warning">Is not email!</string>
     <string name="login_enter_your_email">Enter your email…</string>
     <string name="login_enter_your_password">Enter your password…</string>
+    <string name="feed_interpoint">·</string>
+    <string name="feed_more">···</string>
+    <string name="vote_now">Vote now!</string>
 </resources>
