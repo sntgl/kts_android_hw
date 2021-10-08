@@ -23,23 +23,39 @@ class FeedItemDelegate(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): FeedItemDelegateVH {
-        val binding = ItemFeedMultiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemFeedMultiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FeedItemDelegateVH(binding, notifyChanged)
     }
 
-    override fun onBindViewHolder(item: Any, holder: FeedItemDelegateVH, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        item: Any,
+        holder: FeedItemDelegateVH,
+        payloads: MutableList<Any>
+    ) {
         holder.bind(item as FeedItem)
     }
 
     class FeedItemDelegateVH(
         private val binding: ItemFeedMultiBinding,
         private val notifyChanged: (position: Int) -> Any
-        ) : RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
         private var feedItem: FeedItem? = null
+
+        init {
+            with(binding) {
+                itemFeedUpButton.setOnClickListener {
+                    vote(Vote.UP)
+                }
+                itemFeedDownButton.setOnClickListener {
+                    vote(Vote.DOWN)
+                }
+            }
+        }
 
         fun bind(item: FeedItem) { //TODO
             feedItem = item
-            with (binding) {
+            with(binding) {
                 itemFeedSubredditImg.setImageResource(R.color.vote)
                 if (item.content is FeedContent.ImageType) {
                     itemFeedImage.setImageResource(R.drawable.ic_launcher_foreground)
@@ -51,13 +67,6 @@ class FeedItemDelegate(
                 itemFeedDatePublished.text = item.datePublished.toString()
                 itemFeedTitle.text = item.title
                 setVoteCount()
-                itemFeedUpButton.setOnClickListener {
-                    vote(Vote.UP)
-                }
-                itemFeedDownButton.setOnClickListener {
-                    vote(Vote.DOWN)
-                }
-
             }
             setButtonColors()
             setVoteCount()
@@ -72,7 +81,6 @@ class FeedItemDelegate(
             setVoteCount()
             notifyChanged(layoutPosition)
         }
-
 
         private fun setVoteCount() {
             binding.itemFeedVoteCounter.text = if (feedItem?.voteCounter != null) {
@@ -108,6 +116,5 @@ class FeedItemDelegate(
                 PorterDuff.Mode.SRC_IN
             )
         }
-
     }
 }

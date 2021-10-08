@@ -41,7 +41,6 @@ class OnBoardingAdapter :
         holder.bind(data[position])
     }
 
-
     class PagerVH(private val binding: ItemOnboardingFeatureBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(model: PagerModel) {

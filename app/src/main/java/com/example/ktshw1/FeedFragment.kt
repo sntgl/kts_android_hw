@@ -26,22 +26,23 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private fun createRecycler() {
         feedAdapter = ListDelegatesAdapter()
-        with (binding.feed) {
+        with(binding.feed) {
             adapter = feedAdapter
             val orientation = RecyclerView.VERTICAL
             layoutManager = LinearLayoutManager(context, orientation, false)
-            addOnScrollListener(FeedPagination(
-                layoutManager as LinearLayoutManager,
-                ::loadMoreItems
-            ))
+            addOnScrollListener(
+                FeedPagination(
+                    layoutManager as LinearLayoutManager,
+                    ::loadMoreItems
+                )
+            )
             addItemDecoration(DividerItemDecoration(context, orientation))
             setHasFixedSize(true)
         }
     }
 
-
     private fun getRandomItems() = List(10) {
-        FeedItem (
+        FeedItem(
             uuid = UUID.randomUUID(),
             datePublished = (1000689510..1632689510).random(),
             subredditName = "r/SubredditName",
@@ -67,6 +68,5 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         } + getRandomItems() + FeedLoading()
         feedAdapter.items = newItems
         Timber.d("Pagination ${newItems.size}")
-
     }
 }
