@@ -12,12 +12,12 @@ import timber.log.Timber
 object Networking {
 
     private val okhttpClient = OkHttpClient.Builder()
-        .addNetworkInterceptor(
-            HttpLoggingInterceptor {
-                Timber.tag("Network").d(it)
-            }
-                .setLevel(HttpLoggingInterceptor.Level.BODY)
-        )
+//        .addNetworkInterceptor(
+//            HttpLoggingInterceptor {
+//                Timber.tag("Network").d(it)
+//            }
+//                .setLevel(HttpLoggingInterceptor.Level.BODY)
+//        )
         .addInterceptor { chain: Chain ->
             val request = chain.request()
             val authenticatedRequest = request.newBuilder()

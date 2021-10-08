@@ -15,9 +15,8 @@ import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 
 class FeedItemDelegate(
     private val notifyChanged: (position: Int) -> Any,
-    private val voteVM: (id: String, newVote: Boolean?) -> Any,
+    private val voteVM: (subreddit: Subreddit, newVote: Boolean?) -> Any,
 ) : AbsListItemAdapterDelegate<Any, Any, FeedItemDelegate.FeedItemDelegateVH>() {
-
 
 
     override fun isForViewType(item: Any, items: MutableList<Any>, position: Int): Boolean {
@@ -25,26 +24,42 @@ class FeedItemDelegate(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): FeedItemDelegateVH {
-        val binding = ItemFeedMultiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemFeedMultiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FeedItemDelegateVH(binding, notifyChanged, voteVM)
     }
 
-    override fun onBindViewHolder(item: Any, holder: FeedItemDelegateVH, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        item: Any,
+        holder: FeedItemDelegateVH,
+        payloads: MutableList<Any>
+    ) {
         holder.bind(item as Subreddit)
     }
 
     class FeedItemDelegateVH(
         private val binding: ItemFeedMultiBinding,
         private val notifyChanged: (position: Int) -> Any,
-        private val voteVM: (id: String, newVote: Boolean?) -> Any,
+        private val voteVM: (subreddit: Subreddit, newVote: Boolean?) -> Any,
 
         ) : RecyclerView.ViewHolder(binding.root) {
         private var feedItem: Subreddit? = null
 
+        init {
+            with(binding) {
+                itemFeedUpButton.setOnClickListener {
+                    vote(true)
+                }
+                itemFeedDownButton.setOnClickListener {
+                    vote(false)
+                }
+            }
+        }
+
         fun bind(item: Subreddit) { //TODO
             //Glide, Coil, Picasso
             feedItem = item
-            with (binding) {
+            with(binding) {
 //                itemFeedSubredditImg.setImageResource(R.color.vote)
 
 
@@ -61,43 +76,18 @@ class FeedItemDelegate(
                 itemFeedTitle.text = item.title
 //                setVoteCount()
                 itemFeedVoteCounter.text = item.score.toString()
-                itemFeedUpButton.setOnClickListener {
-                    vote(true)
-                }
-                itemFeedDownButton.setOnClickListener {
-                    vote(false)
-                }
-
             }
             setButtonColors()
-//            setVoteCount()
         }
 
         private fun vote(vote: Boolean) {
-            val oldVote = feedItem?.vote
-            if (oldVote != vote) {
-                voteVM(
-                    feedItem?.id ?: "",
-                    if (oldVote != null) null else vote
-                )
+            val item = feedItem
+            if (item != null) {
+                voteVM(item, if (item.vote != null) null else vote)
+                setButtonColors()
+                notifyChanged(layoutPosition)
             }
-            setButtonColors()
-//            setVoteCount()
-            notifyChanged(layoutPosition)
         }
-
-
-//        private fun setVoteCount() {
-//            binding.itemFeedVoteCounter.text = if (feedItem?.voteCounter != null) {
-//                when (feedItem?.vote) {
-//                    Vote.UP -> count + 1
-//                    Vote.DOWN -> count - 1
-//                    Vote.NOT_VOTED -> count
-//                    else -> binding.root.context.getString(R.string.vote_now)
-//                }.toString()
-//            } else
-//                binding.root.context.getString(R.string.vote_now)
-//        }
 
         private fun setButtonColors() {
             @ColorRes
@@ -117,6 +107,5 @@ class FeedItemDelegate(
                 PorterDuff.Mode.SRC_IN
             )
         }
-//
     }
 }

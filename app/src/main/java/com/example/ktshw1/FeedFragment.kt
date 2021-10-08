@@ -22,7 +22,7 @@ import studio.kts.android.school.lection4.networking.data.FeedRepository
 class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val binding: FragmentFeedBinding by viewBinding(FragmentFeedBinding::bind)
     private var feedAdapter: ListDelegatesAdapter by autoCleared()
-    val feedViewModel = FeedViewModel()
+    private val feedViewModel = FeedViewModel()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         createRecycler()
         Timber.d("Auth token is ${UserInfo.authToken}")
 
-        feedViewModel.firstBestFeed()
+        feedViewModel.getBestFeed()
 
         feedAdapter.items = listOf(FeedLoading())
         feedViewModel.feedList.observe(viewLifecycleOwner, {
@@ -87,6 +87,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 //    }
 
     private fun loadMoreItems() {
-        feedViewModel.nextBestFeed()
+        feedViewModel.getBestFeed()
     }
 }

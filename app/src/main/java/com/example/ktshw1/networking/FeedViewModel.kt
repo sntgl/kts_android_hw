@@ -1,9 +1,6 @@
 package com.example.ktshw1.networking
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -18,79 +15,71 @@ class FeedViewModel: ViewModel() {
 
     private var currentSearchJob: Job? = null
 
+    private var after: String = ""
+
     val feedList: LiveData<List<*>>
         get() = feedLiveData
 
     val isLoading: LiveData<Boolean>
         get() = isLoadingLiveData
 
-    fun firstBestFeed() {
-        isLoadingLiveData.postValue(true)
+    fun getBestFeed() {
+        if (isLoadingLiveData.value == true) return
+        isLoadingLiveData.value = true
         currentSearchJob?.cancel()
         val timber = Timber.tag("LOAD")
         currentSearchJob = viewModelScope.launch {
             runCatching {
-                Timber.tag("LOAD").d("Request sent")
-                repository.getBestFeed()
+                Timber.tag("LOAD").d("Request sent, after $after")
+                repository.getBestFeed(after)
             }.onSuccess {
-                Timber.tag("LOAD").d("Success")
                 isLoadingLiveData.postValue(false)
-                postLoading(it)
-//                feedLiveData.postValue(value+FeedLoading())
+                Timber.tag("LOAD").d("Success")
+                after = it.after ?: ""
+                appendToFeed(unwrap(it))
             }.onFailure {
+                isLoadingLiveData.postValue(false)
                 Timber.tag("LOAD").d("Error")
                 timber.e(it)
-                isLoadingLiveData.postValue(false)
-                postLoading(null)
             }
         }
     }
 
-    fun nextBestFeed() {
-        if (isLoading.value == true) return
-        isLoadingLiveData.postValue(true)
-        currentSearchJob?.cancel()
-        val after: String = getLastSubreddit()
-        currentSearchJob = viewModelScope.launch {
-            runCatching {
-                Timber.tag("LOAD next").d("Request sent, next is $after")
-                repository.getNextBestFeed(after)
-            }.onSuccess {
-                Timber.tag("LOAD next").d("Success")
-                isLoadingLiveData.postValue(false)
-                postLoading(feedLiveData.value?.plus(it))
-            }.onFailure {
-                Timber.tag("LOAD next").d("Error")
-                Timber.tag("LOAD next").e(it)
-                isLoadingLiveData.postValue(false)
-            }
-        }
+    private fun unwrap(wrapped: ServerListingWrapper<ServerResponseWrapper<Subreddit>>): List<Subreddit> {
+        val unwrappedList = mutableListOf<Subreddit>()
+        wrapped.children.forEach { unwrappedList.add(it.data) }
+        return unwrappedList
     }
 
-    private fun getLastSubreddit(): String {
-        val woLast = feedLiveData.value?.dropLast(1) ?: emptyList()
-        return if (woLast.isNotEmpty() && woLast.last() is Subreddit)
-            (woLast.last() as Subreddit).id else ""
-    }
-
-    private fun postLoading(l: List<*>?) {
-        var dropLast = feedLiveData.value?.dropLast(1) ?: emptyList()
+    private fun appendToFeed(l: List<*>?) {
+        //добавляет l к feedLiveData и перемещает FeedLoading в конец
+        var dropLast = if (feedLiveData.value?.last() is FeedLoading)
+            feedLiveData.value?.dropLast(1) ?: emptyList() else emptyList()
         dropLast = dropLast.plus(l?.plus(FeedLoading()) ?: listOf(FeedLoading()))
         feedLiveData.postValue(dropLast)
     }
 
-    fun vote(id: String, newVote: Boolean?) {
+    fun vote(sr: Subreddit, newVote: Boolean?) {
         currentSearchJob = viewModelScope.launch {
             runCatching {
-                Timber.tag("Vote").d("Request sent, id $id, new_vote $newVote")
-                repository.vote(id, newVote)
+                Timber.tag("Vote").d("Request sent, id ${sr.id}, new_vote $newVote")
+                repository.vote(sr.id, newVote)
             }.onSuccess {
+                val fLD = feedLiveData.value
+                if (it is Subreddit && fLD != null) {
+                    val index = fLD.indexOf(sr)
+                    Timber.tag("Vote").d("Subreddit updated!")
+                    val list = fLD.toMutableList()
+                    list[index] = it
+                    feedLiveData.postValue(list)
+                }
                 Timber.tag("Vote").d("Success")
-                postLoading(feedLiveData.value?.plus(it))
             }.onFailure {
                 Timber.tag("Vote").d("Error")
                 Timber.tag("Vote").e(it)
             }
         }
     }
+
+
 }

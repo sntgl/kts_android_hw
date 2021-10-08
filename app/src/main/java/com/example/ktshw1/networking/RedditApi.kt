@@ -8,15 +8,13 @@ import retrofit2.http.*
 interface RedditApi {
     @GET("best")
     suspend fun loadBestStart(
-        @Query("count") count: Int = 10
     ): ServerResponseWrapper<
             ServerListingWrapper<
                     ServerResponseWrapper<
                             Subreddit>>>
     @GET("best")
     suspend fun loadBestAfter(
-        @Query("after") after: String,
-        @Query("count") count: Int = 10
+        @Query("after") after: String
     ): ServerResponseWrapper<
             ServerListingWrapper<
                     ServerResponseWrapper<
@@ -28,5 +26,13 @@ interface RedditApi {
         @Field("id") id: String,
         @Field("dir") dir: Int
     )
+
+    @GET("api/info")
+    suspend fun loadSubreddit(
+        @Query("id") id: String
+    ): ServerResponseWrapper<
+            ServerListingWrapper<
+                    ServerResponseWrapper<
+                            Subreddit>>>
 
 }
