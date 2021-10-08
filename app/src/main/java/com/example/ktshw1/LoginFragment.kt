@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -21,21 +22,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun bindFields() {
         // Обновление ViewModel при изменении полей pass/email
-        binding.passwordField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                model.onEditPass(s.toString())
-            }
-        })
-        binding.emailField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                model.onEditEmail(s.toString())
-            }
-        })
+        binding.passwordField.doAfterTextChanged { model.onEditPass(it.toString()) }
+        binding.emailField.doAfterTextChanged { model.onEditEmail(it.toString()) }
         // Изменение ошибок при изменении ViewModel
+
         model.loginEmailValid.observe(viewLifecycleOwner, { valid ->
             binding.emailFieldLayout.isErrorEnabled = !valid
             if (!valid)
