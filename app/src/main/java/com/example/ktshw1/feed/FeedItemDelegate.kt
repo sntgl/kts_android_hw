@@ -1,5 +1,6 @@
 package com.example.ktshw1.feed
 
+import android.content.Context
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +8,12 @@ import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.ktshw1.R
 import com.example.ktshw1.databinding.ItemFeedMultiBinding
 import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
+import kotlin.coroutines.coroutineContext
 
 
 class FeedItemDelegate(
@@ -56,10 +59,21 @@ class FeedItemDelegate(
             }
         }
 
-        fun bind(item: Subreddit) { //TODO
+        fun bind(item: Subreddit) {
             //Glide, Coil, Picasso
             feedItem = item
             with(binding) {
+                if (item.thumbnail != "self") {
+                    itemFeedImage.visibility = View.VISIBLE
+                    Glide.with(itemFeedImage.context)
+                        .load(item.thumbnail)
+                        .centerCrop()
+                        .placeholder(R.drawable.hand)
+                        .into(itemFeedImage)
+                } else {
+                    itemFeedImage.visibility = View.GONE
+                }
+
 //                itemFeedSubredditImg.setImageResource(R.color.vote)
 
 
@@ -68,7 +82,7 @@ class FeedItemDelegate(
 //                    itemFeedImage.visibility = View.VISIBLE
 //                } else
 //                    itemFeedImage.visibility = View.GONE
-                itemFeedImage.visibility = View.GONE
+//                itemFeedImage.visibility = View.GONE
 
                 itemFeedSubredditName.text = item.subreddit_name
                 itemFeedUserName.text = item.author

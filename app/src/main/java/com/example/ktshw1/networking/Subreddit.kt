@@ -16,4 +16,5 @@ data class Subreddit(
     val url: String, //may be image,
     @Json(name = "likes")
     val vote: Boolean?, //
+    val thumbnail: String, //
 )
