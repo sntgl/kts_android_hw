@@ -17,4 +17,13 @@ class FeedRepository {
         response.forEach { unwrappedList.add(it.data) }
         return unwrappedList
     }
+
+    suspend fun vote(id: String, newVote: Boolean?) {
+        val dir = when (newVote) {
+            null -> 0
+            true -> 1
+            false -> 0
+        }
+        Networking.redditApi.vote(id, dir)
+    }
 }

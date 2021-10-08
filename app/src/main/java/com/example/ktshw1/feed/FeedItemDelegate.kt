@@ -9,15 +9,16 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ktshw1.R
 import com.example.ktshw1.databinding.ItemFeedMultiBinding
-import com.example.ktshw1.model.FeedContent
-import com.example.ktshw1.model.FeedItem
-import com.example.ktshw1.model.Vote
 import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 
+
 class FeedItemDelegate(
     private val notifyChanged: (position: Int) -> Any,
+    private val voteVM: (id: String, newVote: Boolean?) -> Any,
 ) : AbsListItemAdapterDelegate<Any, Any, FeedItemDelegate.FeedItemDelegateVH>() {
+
+
 
     override fun isForViewType(item: Any, items: MutableList<Any>, position: Int): Boolean {
         return item is Subreddit
@@ -25,7 +26,7 @@ class FeedItemDelegate(
 
     override fun onCreateViewHolder(parent: ViewGroup): FeedItemDelegateVH {
         val binding = ItemFeedMultiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FeedItemDelegateVH(binding, notifyChanged)
+        return FeedItemDelegateVH(binding, notifyChanged, voteVM)
     }
 
     override fun onBindViewHolder(item: Any, holder: FeedItemDelegateVH, payloads: MutableList<Any>) {
@@ -34,7 +35,9 @@ class FeedItemDelegate(
 
     class FeedItemDelegateVH(
         private val binding: ItemFeedMultiBinding,
-        private val notifyChanged: (position: Int) -> Any
+        private val notifyChanged: (position: Int) -> Any,
+        private val voteVM: (id: String, newVote: Boolean?) -> Any,
+
         ) : RecyclerView.ViewHolder(binding.root) {
         private var feedItem: Subreddit? = null
 
@@ -42,44 +45,50 @@ class FeedItemDelegate(
             //Glide, Coil, Picasso
             feedItem = item
             with (binding) {
-                itemFeedSubredditImg.setImageResource(R.color.vote)
+//                itemFeedSubredditImg.setImageResource(R.color.vote)
+
+
 //                if (item.content is FeedContent.ImageType) {
 //                    itemFeedImage.setImageResource(R.drawable.ic_launcher_foreground)
 //                    itemFeedImage.visibility = View.VISIBLE
 //                } else
 //                    itemFeedImage.visibility = View.GONE
+                itemFeedImage.visibility = View.GONE
+
                 itemFeedSubredditName.text = item.subreddit_name
                 itemFeedUserName.text = item.author
                 itemFeedDatePublished.text = item.created.toString()
                 itemFeedTitle.text = item.title
 //                setVoteCount()
                 itemFeedVoteCounter.text = item.score.toString()
-//                itemFeedUpButton.setOnClickListener {
-//                    vote(Vote.UP)
-//                }
-//                itemFeedDownButton.setOnClickListener {
-//                    vote(Vote.DOWN)
-//                }
+                itemFeedUpButton.setOnClickListener {
+                    vote(true)
+                }
+                itemFeedDownButton.setOnClickListener {
+                    vote(false)
+                }
 
             }
-//            setButtonColors()
+            setButtonColors()
 //            setVoteCount()
         }
 
-//        private fun vote(vote: Vote) {
-//            val oldVote = feedItem?.vote ?: Vote.NOT_VOTED
-//            if (oldVote != vote) {
-//                feedItem?.vote = if (oldVote != Vote.NOT_VOTED) Vote.NOT_VOTED else vote
-//            }
-//            setButtonColors()
+        private fun vote(vote: Boolean) {
+            val oldVote = feedItem?.vote
+            if (oldVote != vote) {
+                voteVM(
+                    feedItem?.id ?: "",
+                    if (oldVote != null) null else vote
+                )
+            }
+            setButtonColors()
 //            setVoteCount()
-//            notifyChanged(layoutPosition)
-//        }
+            notifyChanged(layoutPosition)
+        }
 
 
 //        private fun setVoteCount() {
 //            binding.itemFeedVoteCounter.text = if (feedItem?.voteCounter != null) {
-//                val count = feedItem?.voteCounter ?: 0
 //                when (feedItem?.vote) {
 //                    Vote.UP -> count + 1
 //                    Vote.DOWN -> count - 1
@@ -90,27 +99,24 @@ class FeedItemDelegate(
 //                binding.root.context.getString(R.string.vote_now)
 //        }
 
-//        private fun setButtonColors() {
-//            @ColorRes
-//            val upButtonColor = if (feedItem?.vote == Vote.UP) R.color.vote
-//            else R.color.black
-//
-//            @ColorRes
-//            val downButtonColor = if (feedItem?.vote == Vote.DOWN) R.color.vote
-//            else R.color.black
-//            binding.itemFeedDownButton.setColorFilter(
-//                ContextCompat.getColor(
-//                    binding.root.context ?: error("context broken"), downButtonColor
-//                ),
-//                PorterDuff.Mode.SRC_IN
-//            )
-//            binding.itemFeedUpButton.setColorFilter(
-//                ContextCompat.getColor(
-//                    binding.root.context, upButtonColor
-//                ),
-//                PorterDuff.Mode.SRC_IN
-//            )
-//        }
+        private fun setButtonColors() {
+            @ColorRes
+            val upButtonColor = if (feedItem?.vote == true) R.color.vote
+            else R.color.black
+
+            @ColorRes
+            val downButtonColor = if (feedItem?.vote == false) R.color.vote
+            else R.color.black
+
+            binding.itemFeedDownButton.setColorFilter(
+                ContextCompat.getColor(binding.root.context, downButtonColor),
+                PorterDuff.Mode.SRC_IN
+            )
+            binding.itemFeedUpButton.setColorFilter(
+                ContextCompat.getColor(binding.root.context, upButtonColor),
+                PorterDuff.Mode.SRC_IN
+            )
+        }
 //
     }
 }

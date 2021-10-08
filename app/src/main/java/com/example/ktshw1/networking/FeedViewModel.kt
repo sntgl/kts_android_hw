@@ -78,4 +78,19 @@ class FeedViewModel: ViewModel() {
         dropLast = dropLast.plus(l?.plus(FeedLoading()) ?: listOf(FeedLoading()))
         feedLiveData.postValue(dropLast)
     }
+
+    fun vote(id: String, newVote: Boolean?) {
+        currentSearchJob = viewModelScope.launch {
+            runCatching {
+                Timber.tag("Vote").d("Request sent, id $id, new_vote $newVote")
+                repository.vote(id, newVote)
+            }.onSuccess {
+                Timber.tag("Vote").d("Success")
+                postLoading(feedLiveData.value?.plus(it))
+            }.onFailure {
+                Timber.tag("Vote").d("Error")
+                Timber.tag("Vote").e(it)
+            }
+        }
+    }
 }

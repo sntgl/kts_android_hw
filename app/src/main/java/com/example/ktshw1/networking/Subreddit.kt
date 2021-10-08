@@ -14,4 +14,6 @@ data class Subreddit(
     val subreddit_name: String, //r/Jokes
     val title: String, //My favorite joke I\u2019ve ever read on Reddit, one of the first I\u2019ve ever read here too: Everyone Knows Dave
     val url: String, //may be image,
+    @Json(name = "likes")
+    val vote: Boolean?, //
 )

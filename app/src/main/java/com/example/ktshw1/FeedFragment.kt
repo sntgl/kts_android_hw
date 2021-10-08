@@ -50,7 +50,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     }
 
     private fun createRecycler() {
-        feedAdapter = ListDelegatesAdapter()
+        feedAdapter = ListDelegatesAdapter(feedViewModel)
         with(binding.feed) {
             adapter = feedAdapter
             val orientation = RecyclerView.VERTICAL
@@ -67,24 +67,24 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     }
 
 
-    private fun getRandomItems() = List(10) {
-        FeedItem(
-            uuid = UUID.randomUUID(),
-            datePublished = (1000689510..1632689510).random(),
-            subredditName = "r/SubredditName",
-            subredditImage = "",
-            userName = "RedditerUserName",
-            voteCounter = (0..10000).random(),
-            title = "Title here",
-            content = when ((1..2).random()) {
-                1 -> FeedContent.ImageType(
-                    image = "IMAGE HERE"
-                )
-                2 -> FeedContent.OnlyTitleType
-                else -> error("Randomizer broken")
-            }
-        )
-    }
+//    private fun getRandomItems() = List(10) {
+//        FeedItem(
+//            uuid = UUID.randomUUID(),
+//            datePublished = (1000689510..1632689510).random(),
+//            subredditName = "r/SubredditName",
+//            subredditImage = "",
+//            userName = "RedditerUserName",
+//            voteCounter = (0..10000).random(),
+//            title = "Title here",
+//            content = when ((1..2).random()) {
+//                1 -> FeedContent.ImageType(
+//                    image = "IMAGE HERE"
+//                )
+//                2 -> FeedContent.OnlyTitleType
+//                else -> error("Randomizer broken")
+//            }
+//        )
+//    }
 
     private fun loadMoreItems() {
         feedViewModel.nextBestFeed()
