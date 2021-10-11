@@ -47,7 +47,7 @@ class FeedViewModel: ViewModel() {
 
     private fun unwrap(wrapped: ServerListingWrapper<ServerResponseWrapper<Subreddit>>): List<Subreddit> {
         val unwrappedList = mutableListOf<Subreddit>()
-        wrapped.children.forEach { unwrappedList.add(it.data) }
+        wrapped.children.forEach { unwrappedList.add(FeedRepository.setContentType(it.data)) }
         return unwrappedList
     }
 

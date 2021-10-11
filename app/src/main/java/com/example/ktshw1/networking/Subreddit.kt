@@ -18,4 +18,10 @@ data class Subreddit(
     val vote: Boolean?, //
     val thumbnail: String, //
     val num_comments: Int, //
-)
+    @Transient
+    var content_type: Content = Content.NONE
+) {
+    enum class Content {
+        NONE, URL, IMAGE
+    }
+}

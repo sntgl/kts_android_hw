@@ -16,4 +16,6 @@
     <string name="feed_more">···</string>
     <string name="vote_now">Vote now!</string>
     <string name="auth_canceled">Login failed!</string>
+    <string name="loading_error">Loading error</string>
+    <string name="tap_to_retry">Tap to retry\nHold to open URL</string>
 </resources>
