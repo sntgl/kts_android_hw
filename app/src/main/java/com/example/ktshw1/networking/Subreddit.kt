@@ -13,8 +13,9 @@ data class Subreddit(
     @Json(name = "subreddit_name_prefixed")
     val subreddit_name: String, //r/Jokes
     val title: String, //My favorite joke I\u2019ve ever read on Reddit, one of the first I\u2019ve ever read here too: Everyone Knows Dave
-    val url: String, //may be image,
+    val url: String, //may be image, may be
     @Json(name = "likes")
     val vote: Boolean?, //
     val thumbnail: String, //
+    val num_comments: Int, //
 )

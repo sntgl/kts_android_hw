@@ -2,17 +2,24 @@ package com.example.ktshw1.feed
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.ktshw1.R
 import com.example.ktshw1.databinding.ItemFeedMultiBinding
 import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
+import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
 
@@ -63,16 +70,9 @@ class FeedItemDelegate(
             //Glide, Coil, Picasso
             feedItem = item
             with(binding) {
-                if (item.thumbnail != "self") {
-                    itemFeedImage.visibility = View.VISIBLE
-                    Glide.with(itemFeedImage.context)
-                        .load(item.thumbnail)
-                        .centerCrop()
-                        .placeholder(R.drawable.hand)
-                        .into(itemFeedImage)
-                } else {
-                    itemFeedImage.visibility = View.GONE
-                }
+//                if (item.thumbnail != "self") {
+                loadImage(binding, item)
+                itemFeedCommentNumber.text = feedItem?.num_comments.toString()
 
 //                itemFeedSubredditImg.setImageResource(R.color.vote)
 
@@ -92,6 +92,77 @@ class FeedItemDelegate(
                 itemFeedVoteCounter.text = item.score.toString()
             }
             setButtonColors()
+        }
+
+        private fun loadImage(binding: ItemFeedMultiBinding, item: Subreddit) {
+            with(binding) {
+                if (item.url.endsWith(".jpg", true) ||
+                    item.url.endsWith(".jpeg", true) ||
+                    item.url.endsWith(".png", true)
+                ) {
+                    itemFeedImage.visibility = View.INVISIBLE
+                    itemFeedProgressbar.visibility = View.VISIBLE
+                    Glide.with(itemFeedImage.context)
+                        .load(item.url)
+                        .thumbnail(
+                            Glide.with(itemFeedImage.context)
+                                .load(item.thumbnail)
+                                .listener(object : RequestListener<Drawable> {
+                                    override fun onLoadFailed(
+                                        e: GlideException?,
+                                        model: Any?,
+                                        target: Target<Drawable>?,
+                                        isFirstResource: Boolean
+                                    ): Boolean {
+                                        itemFeedImage.visibility = View.INVISIBLE
+                                        itemFeedProgressbar.visibility = View.VISIBLE
+                                        Timber.tag("image ${item.url}").d("thumb fail")
+                                        return false
+                                    }
+
+                                    override fun onResourceReady(
+                                        resource: Drawable?,
+                                        model: Any?,
+                                        target: Target<Drawable>?,
+                                        dataSource: DataSource?,
+                                        isFirstResource: Boolean
+                                    ): Boolean {
+                                        Timber.tag("image ${item.url}").d("thumb success")
+                                        itemFeedImage.visibility = View.VISIBLE
+                                        itemFeedProgressbar.visibility = View.GONE
+                                        return false
+                                    }
+                                })
+                        )
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                Timber.tag("image ${item.url}").d("fail")
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                Timber.tag("image ${item.url}").d("succcess")
+                                return false
+                            }
+                        })
+                        .placeholder(R.drawable.hand)
+                        .into(itemFeedImage)
+                } else {
+                    itemFeedImage.visibility = View.GONE
+                    itemFeedProgressbar.visibility = View.GONE
+                }
+            }
         }
 
         private fun vote(vote: Boolean) {
