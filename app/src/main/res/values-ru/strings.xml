@@ -18,4 +18,6 @@
     <string name="auth_canceled">Неудачная авторизация!</string>
     <string name="loading_error">Ошибка загрузки</string>
     <string name="tap_to_retry">Нажмите, чтобы попробовать снова\nПодержите, чтобы открыть в браузере</string>
+    <string name="vote_error">Не удалось проголосовать!</string>
+    <string name="feed_error">Ошибка подключения. Нажмите, чтобы попробовать снова...</string>
 </resources>

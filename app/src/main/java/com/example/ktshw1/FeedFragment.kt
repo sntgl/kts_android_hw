@@ -2,6 +2,7 @@ package com.example.ktshw1
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
@@ -24,29 +25,25 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private var feedAdapter: ListDelegatesAdapter by autoCleared()
     private val feedViewModel = FeedViewModel()
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         createRecycler()
         Timber.d("Auth token is ${UserInfo.authToken}")
+        feedViewModel.voteError.observe(viewLifecycleOwner, {
+            if (it == true) {
+                feedViewModel.voteError.value = false
+                Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
+            }
+        })
 
+        feedViewModel.feedError.observe(viewLifecycleOwner, {
+            feedAdapter.notifyItemChanged(feedAdapter.itemCount - 1)
+        })
         feedViewModel.getBestFeed()
-
         feedAdapter.items = listOf(FeedLoading())
         feedViewModel.feedList.observe(viewLifecycleOwner, {
             feedAdapter.items = it
         })
-//        lifecycleScope.launch {
-//            runCatching {
-//                Timber.tag("LOAD").d("Request sent")
-//                repository.getBestFeed()
-//            }.onSuccess {
-//                Timber.tag("LOAD").d("Success")
-//            }.onFailure {
-//                Timber.tag("LOAD").d("Error")
-//                Timber.tag("LOAD").e(it)
-//            }
-//        }
     }
 
     private fun createRecycler() {
@@ -65,26 +62,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             setHasFixedSize(true)
         }
     }
-
-
-//    private fun getRandomItems() = List(10) {
-//        FeedItem(
-//            uuid = UUID.randomUUID(),
-//            datePublished = (1000689510..1632689510).random(),
-//            subredditName = "r/SubredditName",
-//            subredditImage = "",
-//            userName = "RedditerUserName",
-//            voteCounter = (0..10000).random(),
-//            title = "Title here",
-//            content = when ((1..2).random()) {
-//                1 -> FeedContent.ImageType(
-//                    image = "IMAGE HERE"
-//                )
-//                2 -> FeedContent.OnlyTitleType
-//                else -> error("Randomizer broken")
-//            }
-//        )
-//    }
 
     private fun loadMoreItems() {
         feedViewModel.getBestFeed()

@@ -65,8 +65,11 @@ class FeedItemDelegate(
                     vote(false)
                 }
                 itemFeedRetryPlaceholder.setOnClickListener {
-                    loadImage(binding, feedItem!!) //TODO
-                    itemFeedRetryPlaceholder.visibility = View.GONE
+                    if (feedItem != null) {
+                        val item: Subreddit = feedItem as Subreddit
+                        loadImage(item) //TODO
+                        itemFeedRetryPlaceholder.visibility = View.GONE
+                    }
                 }
                 itemFeedRetryPlaceholder.setOnLongClickListener {
                     val url = feedItem?.url
@@ -80,7 +83,7 @@ class FeedItemDelegate(
         }
 
         fun bind(item: Subreddit) {
-            //Glide, Coil, Picasso
+            //also: Coil, Picasso
             feedItem = item
             with(binding) {
                 loadContent(binding, item)
@@ -105,13 +108,13 @@ class FeedItemDelegate(
                         itemFeedUrl.text = item.url
                         itemFeedUrl.visibility = View.VISIBLE
                     }
-                    Subreddit.Content.IMAGE -> loadImage(binding, item)
+                    Subreddit.Content.IMAGE -> loadImage(item)
                     Subreddit.Content.NONE -> {}
                 }
             }
         }
 
-        private fun loadImage(binding: ItemFeedMultiBinding, item: Subreddit) {
+        private fun loadImage(item: Subreddit) {
             with (binding) {
                 itemFeedProgressbar.visibility = View.VISIBLE
                 itemFeedImage.visibility = View.VISIBLE
@@ -174,85 +177,6 @@ class FeedItemDelegate(
                         }
                     })
                     .into(itemFeedImage)
-            }
-        }
-
-        private fun loadImageOld(binding: ItemFeedMultiBinding, item: Subreddit) {
-            with(binding) {
-                if (item.url.endsWith(".jpg", true) ||
-                    item.url.endsWith(".jpeg", true) ||
-                    item.url.endsWith(".png", true) ||
-                    item.url.contains("imgur.com", true)
-                ) {
-                    itemFeedUrl.visibility = View.INVISIBLE
-                    itemFeedImage.visibility = View.INVISIBLE
-                    itemFeedProgressbar.visibility = View.VISIBLE
-                    Glide.with(itemFeedImage.context)
-                        .load(item.url)
-                        .thumbnail(
-                            Glide.with(itemFeedImage.context)
-                                .load(item.thumbnail)
-                                .listener(object : RequestListener<Drawable> {
-                                    override fun onLoadFailed(
-                                        e: GlideException?,
-                                        model: Any?,
-                                        target: Target<Drawable>?,
-                                        isFirstResource: Boolean
-                                    ): Boolean {
-                                        itemFeedImage.visibility = View.INVISIBLE
-                                        itemFeedProgressbar.visibility = View.VISIBLE
-                                        Timber.tag("image ${item.url}").d("thumb fail")
-                                        return false
-                                    }
-
-                                    override fun onResourceReady(
-                                        resource: Drawable?,
-                                        model: Any?,
-                                        target: Target<Drawable>?,
-                                        dataSource: DataSource?,
-                                        isFirstResource: Boolean
-                                    ): Boolean {
-                                        Timber.tag("image ${item.url}").d("thumb success")
-                                        itemFeedImage.visibility = View.VISIBLE
-                                        itemFeedProgressbar.visibility = View.GONE
-                                        return false
-                                    }
-                                })
-                        )
-                        .listener(object : RequestListener<Drawable> {
-                            override fun onLoadFailed(
-                                e: GlideException?,
-                                model: Any?,
-                                target: Target<Drawable>?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                Timber.tag("image ${item.url}").d("fail")
-                                return false
-                            }
-
-                            override fun onResourceReady(
-                                resource: Drawable?,
-                                model: Any?,
-                                target: Target<Drawable>?,
-                                dataSource: DataSource?,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                Timber.tag("image ${item.url}").d("succcess")
-                                return false
-                            }
-                        })
-                        .placeholder(R.drawable.hand)
-                        .into(itemFeedImage)
-                } else if (!item.url.contains("/comments/")) {
-                    itemFeedImage.visibility = View.GONE
-                    itemFeedProgressbar.visibility = View.GONE
-                    itemFeedUrl.text = item.url
-                    itemFeedUrl.visibility = View.VISIBLE
-                } else {
-                    itemFeedImage.visibility = View.GONE
-                    itemFeedProgressbar.visibility = View.GONE
-                    itemFeedUrl.visibility = View.GONE
-                }
             }
         }
 

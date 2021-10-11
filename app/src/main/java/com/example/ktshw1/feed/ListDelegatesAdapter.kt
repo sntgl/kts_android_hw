@@ -14,7 +14,7 @@ class ListDelegatesAdapter(
 
     init {
         delegatesManager.addDelegate(FeedItemDelegate(::notifyItemChanged, feedViewModel::vote))
-        delegatesManager.addDelegate(FeedLoadDelegate())
+        delegatesManager.addDelegate(FeedLoadDelegate(feedViewModel::retry, ::notifyItemChanged))
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Any>() {

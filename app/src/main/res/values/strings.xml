@@ -19,4 +19,6 @@
     <string name="reddit_base_url" translatable="false">https://oauth.reddit.com/</string>
     <string name="loading_error">Loading error</string>
     <string name="tap_to_retry">Tap to retry\nHold to open URL</string>
+    <string name="vote_error">Vote network error!</string>
+    <string name="feed_error">Network error. Tap to retry…</string>
 </resources>
