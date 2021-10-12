@@ -1,5 +1,7 @@
 package com.example.ktshw1
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -47,7 +49,18 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     }
 
     private fun createRecycler() {
-        feedAdapter = ListDelegatesAdapter(feedViewModel)
+
+        feedAdapter = ListDelegatesAdapter(feedViewModel) { url ->
+            val intent = Intent(Intent.ACTION_SEND).apply {
+//                    data = Uri.parse("mailto:${complexItem.email}")
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT,
+                    getString(R.string.see_this_post)+"\n"+getString(R.string.reddit_base_url)+ url
+                )
+//                data = Uri.parse(url)
+            }
+            startActivity(Intent.createChooser(intent, null))
+        }
         with(binding.feed) {
             adapter = feedAdapter
             val orientation = RecyclerView.VERTICAL

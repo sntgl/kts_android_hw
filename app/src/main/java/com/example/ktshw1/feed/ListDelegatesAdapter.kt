@@ -8,12 +8,16 @@ import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 
 class ListDelegatesAdapter(
-    feedViewModel: FeedViewModel
+    private val feedViewModel: FeedViewModel,
+    share: (url: String) -> Any
 )
     : AsyncListDifferDelegationAdapter<Any>(DiffCallback()) {
 
     init {
-        delegatesManager.addDelegate(FeedItemDelegate(::notifyItemChanged, feedViewModel::vote))
+        delegatesManager.addDelegate(FeedItemDelegate(
+            ::notifyItemChanged,
+            feedViewModel::vote,
+            share))
         delegatesManager.addDelegate(FeedLoadDelegate(feedViewModel::retry, ::notifyItemChanged))
     }
 

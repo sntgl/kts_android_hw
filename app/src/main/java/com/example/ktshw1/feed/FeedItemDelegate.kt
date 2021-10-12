@@ -27,6 +27,7 @@ import android.net.Uri
 class FeedItemDelegate(
     private val notifyChanged: (position: Int) -> Any,
     private val voteVM: (subreddit: Subreddit, newVote: Boolean?) -> Any,
+    private val share: (url: String) -> Any,
 ) : AbsListItemAdapterDelegate<Any, Any, FeedItemDelegate.FeedItemDelegateVH>() {
 
 
@@ -37,7 +38,7 @@ class FeedItemDelegate(
     override fun onCreateViewHolder(parent: ViewGroup): FeedItemDelegateVH {
         val binding =
             ItemFeedMultiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FeedItemDelegateVH(binding, notifyChanged, voteVM)
+        return FeedItemDelegateVH(binding, notifyChanged, voteVM, share)
     }
 
     override fun onBindViewHolder(
@@ -52,12 +53,13 @@ class FeedItemDelegate(
         private val binding: ItemFeedMultiBinding,
         private val notifyChanged: (position: Int) -> Any,
         private val voteVM: (subreddit: Subreddit, newVote: Boolean?) -> Any,
-
+        private val share: (url: String) -> Any,
         ) : RecyclerView.ViewHolder(binding.root) {
         private var feedItem: Subreddit? = null
 
         init {
             with(binding) {
+
                 itemFeedUpButton.setOnClickListener {
                     vote(true)
                 }
@@ -78,6 +80,12 @@ class FeedItemDelegate(
                     startActivity(binding.itemFeedImageContainer.context, i, null)
                     return@setOnLongClickListener false
                 }
+                itemFeedShareButton.setOnClickListener {
+                    val url = feedItem?.permalink
+                    if (url != null)
+                        share(url)
+                }
+
 
             }
         }

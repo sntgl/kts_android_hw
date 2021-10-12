@@ -18,6 +18,7 @@ data class Subreddit(
     val vote: Boolean?, //
     val thumbnail: String, //
     val num_comments: Int, //
+    val permalink: String,
     @Transient
     var content_type: Content = Content.NONE
 ) {
