@@ -28,17 +28,17 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         Timber.d("Auth token is ${UserInfo.authToken}")
         feedViewModel.voteError.observe(viewLifecycleOwner, {
             if (it == true) {
-                feedViewModel.voteError.value = false
+                feedViewModel.onHandledVoteError()
                 Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
             }
         })
-        feedViewModel.getBestFeed()
         feedAdapter.items = listOf(FeedLoading())
         feedViewModel.feedList.observe(viewLifecycleOwner, {
             Timber.d("update feedList!")
             feedAdapter.items = it
         })
     }
+
 
     private fun createRecycler() {
 

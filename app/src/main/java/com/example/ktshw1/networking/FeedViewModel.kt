@@ -1,24 +1,24 @@
 package com.example.ktshw1.networking
 
-import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.*
 import studio.kts.android.school.lection4.networking.data.FeedRepository
 import timber.log.Timber
-import kotlin.coroutines.coroutineContext
 
 
-class FeedViewModel: ViewModel() {
+class FeedViewModel : ViewModel() {
     private val repository = FeedRepository()
 
     private val feedLiveData = MutableLiveData<List<*>>(listOf(FeedLoading()))
     private val isLoadingLiveData = MutableLiveData(false)
 
-    val voteError = MutableLiveData(false)
+    private val voteErrorMutable = MutableLiveData(false)
+    val voteError: LiveData<Boolean>
+        get() = voteErrorMutable
+
     private val feedErrorMutable = MutableLiveData(false)
-    val feedError: LiveData<Boolean>
+    private val feedError: LiveData<Boolean>
         get() = feedErrorMutable
     var feedErrorOld = false
 
@@ -33,15 +33,16 @@ class FeedViewModel: ViewModel() {
         get() = isLoadingLiveData
 
     private val feedErrorObserver: Observer<Boolean> by lazy {
-        Observer<Boolean> { if (it != feedErrorOld) errorToFeed(it) } }
-
-    init {
-        feedError.observeForever(feedErrorObserver)
+        Observer<Boolean> { if (it != feedErrorOld) errorToFeed(it) }
     }
-
 
     private val handler = CoroutineExceptionHandler { _, exception ->
         Timber.d("Network caught $exception")
+    }
+
+    init {
+        feedError.observeForever(feedErrorObserver)
+        getBestFeed()
     }
 
 
@@ -51,16 +52,15 @@ class FeedViewModel: ViewModel() {
         feedErrorMutable.postValue(false)
         currentSearchJob?.cancel()
         val timber = Timber.tag("LOAD")
-        currentSearchJob = viewModelScope.launch (handler) {
+        currentSearchJob = viewModelScope.launch(handler) {
             runCatching {
                 Timber.tag("LOAD").d("Request sent, after $after")
                 repository.getBestFeed(after)
             }.onSuccess {
                 isLoadingLiveData.postValue(false)
                 Timber.tag("LOAD").d("Success")
-                after = it?.after ?: ""
-                if (it != null)
-                    appendToFeed(unwrap(it))
+                appendToFeed(it.first)
+                after = it.second ?: ""
             }.onFailure {
                 feedErrorMutable.postValue(true)
                 isLoadingLiveData.postValue(false)
@@ -68,12 +68,6 @@ class FeedViewModel: ViewModel() {
                 timber.e(it)
             }
         }
-    }
-
-    private fun unwrap(wrapped: ServerListingWrapper<ServerResponseWrapper<Subreddit>>): List<Subreddit> {
-        val unwrappedList = mutableListOf<Subreddit>()
-        wrapped.children.forEach { unwrappedList.add(FeedRepository.setContentType(it.data)) }
-        return unwrappedList
     }
 
     private fun appendToFeed(l: List<*>?) {
@@ -95,7 +89,7 @@ class FeedViewModel: ViewModel() {
     }
 
     fun vote(sr: Subreddit, newVote: Boolean?) {
-        currentSearchJob = viewModelScope.launch (handler) {
+        currentSearchJob = viewModelScope.launch(handler) {
             runCatching {
                 Timber.tag("Vote").d("Request sent, id ${sr.id}, new_vote $newVote")
                 repository.vote(sr.id, newVote)
@@ -110,7 +104,7 @@ class FeedViewModel: ViewModel() {
                 }
                 Timber.tag("Vote").d("Success")
             }.onFailure {
-                voteError.value = true
+                voteErrorMutable.value = true
                 Timber.tag("Vote").d("Error")
                 Timber.tag("Vote").e(it)
             }
@@ -122,6 +116,10 @@ class FeedViewModel: ViewModel() {
         feedErrorMutable.value = false
         appendToFeed(emptyList<FeedLoading>())
         getBestFeed()
+    }
+
+    fun onHandledVoteError() {
+        voteErrorMutable.value = false
     }
 
     override fun onCleared() {
