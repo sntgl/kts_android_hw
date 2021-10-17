@@ -5,7 +5,6 @@
     tools:ignore="ImpliedTouchscreenHardware,MissingLeanbackLauncher,MissingLeanbackSupport">
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:name=".App"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

@@ -1,13 +1,11 @@
 package com.example.ktshw1
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,15 +15,12 @@ import com.example.ktshw1.feed.ListDelegatesAdapter
 import com.example.ktshw1.model.*
 import com.example.ktshw1.networking.FeedViewModel
 import timber.log.Timber
-import java.util.*
 import com.example.ktshw1.utils.autoCleared
-import kotlinx.coroutines.launch
-import studio.kts.android.school.lection4.networking.data.FeedRepository
 
 class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val binding: FragmentFeedBinding by viewBinding(FragmentFeedBinding::bind)
     private var feedAdapter: ListDelegatesAdapter by autoCleared()
-    private val feedViewModel = FeedViewModel()
+    private val feedViewModel: FeedViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
