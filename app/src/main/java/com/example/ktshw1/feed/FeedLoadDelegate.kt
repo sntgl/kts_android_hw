@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ktshw1.R
 import com.example.ktshw1.databinding.ItemFeedMultiBinding
@@ -56,14 +58,14 @@ class FeedLoadDelegate (
             with (binding) {
                 Timber.d("Error state is ${item.isError}")
                 if (item.isError) {
-                    errorImage.visibility = View.VISIBLE
-                    errorText.visibility = View.VISIBLE
                     errorText.text = errorText.context.getString(R.string.feed_error)
-                    progressBar.visibility = View.INVISIBLE
+                    errorImage.isVisible = true
+                    errorText.isVisible = true
+                    progressBar.isGone = true
                 } else {
-                    errorImage.visibility = View.INVISIBLE
-                    errorText.visibility = View.INVISIBLE
-                    progressBar.visibility = View.VISIBLE
+                    errorImage.isGone = true
+                    errorText.isGone = true
+                    progressBar.isVisible = true
                 }
             }
 
