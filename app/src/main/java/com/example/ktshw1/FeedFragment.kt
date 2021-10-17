@@ -32,13 +32,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
             }
         })
-
-        feedViewModel.feedError.observe(viewLifecycleOwner, {
-            feedAdapter.notifyItemChanged(feedAdapter.itemCount - 1)
-        })
         feedViewModel.getBestFeed()
         feedAdapter.items = listOf(FeedLoading())
         feedViewModel.feedList.observe(viewLifecycleOwner, {
+            Timber.d("update feedList!")
             feedAdapter.items = it
         })
     }
@@ -47,12 +44,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
         feedAdapter = ListDelegatesAdapter(feedViewModel) { url ->
             val intent = Intent(Intent.ACTION_SEND).apply {
-//                    data = Uri.parse("mailto:${complexItem.email}")
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT,
                     getString(R.string.see_this_post)+"\n"+getString(R.string.reddit_base_url)+ url
                 )
-//                data = Uri.parse(url)
             }
             startActivity(Intent.createChooser(intent, null))
         }

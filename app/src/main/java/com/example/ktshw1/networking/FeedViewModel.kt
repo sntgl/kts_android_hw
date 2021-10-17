@@ -87,15 +87,11 @@ class FeedViewModel: ViewModel() {
     private fun errorToFeed(error: Boolean = true) {
         feedErrorOld = error
         Timber.d("errorToFeed($error)")
-        if (feedLiveData.value?.last() is FeedLoading &&
-            (feedLiveData.value?.last() as FeedLoading).isError != error) {
-            (feedLiveData.value?.last() as FeedLoading).isError = error
-
-        } else {
-            feedLiveData.postValue(feedLiveData.value?.plus(FeedLoading(
-                isError = error
-            )))
+        var fLD = feedLiveData.value?.toMutableList() ?: emptyList()
+        if (fLD.last() is FeedLoading) {
+            fLD = fLD.dropLast(1)
         }
+        feedLiveData.postValue(fLD.plus(FeedLoading(isError = error)))
     }
 
     fun vote(sr: Subreddit, newVote: Boolean?) {
