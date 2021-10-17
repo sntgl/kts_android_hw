@@ -26,3 +26,19 @@ data class Subreddit(
         NONE, URL, IMAGE
     }
 }
+
+fun Subreddit.setContentType(): Subreddit {
+    val item: Subreddit = this
+    if (item.url.endsWith(".jpg", true) ||
+        item.url.endsWith(".jpeg", true) ||
+        item.url.endsWith(".png", true) ||
+        item.url.contains("imgur.com", true)
+    )
+        item.content_type = Subreddit.Content.IMAGE
+    else if (!(item.url.contains("/comments/") &&
+                item.url.contains("reddit.com")) &&
+        item.url != "self")
+        item.content_type = Subreddit.Content.URL
+    else item.content_type = Subreddit.Content.NONE
+    return item
+}
