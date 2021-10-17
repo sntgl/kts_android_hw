@@ -3,6 +3,7 @@ package com.example.ktshw1.networking
 import androidx.lifecycle.*
 import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import studio.kts.android.school.lection4.networking.data.FeedRepository
 import timber.log.Timber
 
@@ -10,121 +11,115 @@ import timber.log.Timber
 class FeedViewModel : ViewModel() {
     private val repository = FeedRepository()
 
-    private val feedLiveData = MutableLiveData<List<*>>(listOf(FeedLoading()))
-    private val isLoadingLiveData = MutableLiveData(false)
+    private val isLoadingFeedMutable = MutableStateFlow(false)
+    private val isLoadingFeed: StateFlow<Boolean>
+        get() = isLoadingFeedMutable
 
-    private val voteErrorMutable = MutableLiveData(false)
-    val voteError: LiveData<Boolean>
+    private val voteErrorMutable = MutableStateFlow(false)
+    val voteError: StateFlow<Boolean>
         get() = voteErrorMutable
 
-    private val feedErrorMutable = MutableLiveData(false)
-    private val feedError: LiveData<Boolean>
+    private var feedErrorMutable = MutableStateFlow(false)
+    private val feedError: StateFlow<Boolean>
         get() = feedErrorMutable
-    var feedErrorOld = false
 
     private var currentFeedJob: Job? = null
     private var currentVoteJobs: MutableMap<String, Job> = emptyMap<String, Job>().toMutableMap()
 
     private var after: String = ""
 
-    val feedList: LiveData<List<*>>
-        get() = feedLiveData
+    private val feedMutableFlow = MutableStateFlow<List<*>>(listOf(FeedLoading()))
+    val feedFlow: StateFlow<List<*>>
+        get() = feedMutableFlow
 
-    val isLoading: LiveData<Boolean>
-        get() = isLoadingLiveData
+    private val internalFeedFlow = MutableStateFlow<List<*>>(emptyList<Subreddit>())
 
-    private val feedErrorObserver: Observer<Boolean> by lazy {
-        Observer<Boolean> { if (it != feedErrorOld) errorToFeed(it) }
-    }
-
-    init {
-        feedError.observeForever(feedErrorObserver)
-        getBestFeed()
-    }
-
-
-    fun getBestFeed() {
-        if (isLoadingLiveData.value == true) return
-        isLoadingLiveData.value = true
-        feedErrorMutable.postValue(false)
-        currentFeedJob?.cancel()
-        val timber = Timber.tag("LOAD")
-        currentFeedJob = viewModelScope.launch {
-            runCatching {
-                Timber.tag("LOAD").d("Request sent, after $after")
-                repository.getBestFeed(after)
-            }.onSuccess {
-                isLoadingLiveData.postValue(false)
-                Timber.tag("LOAD").d("Success")
-                appendToFeed(it.first)
-                after = it.second ?: ""
-            }.onFailure {
-                feedErrorMutable.postValue(true)
-                isLoadingLiveData.postValue(false)
-                Timber.tag("LOAD").d("Error")
-                timber.e(it)
-            }
-        }
-    }
-
-    private fun appendToFeed(l: List<*>?) {
-        //добавляет l к feedLiveData и перемещает FeedLoading в конец
-        var dropLast = if (feedLiveData.value?.last() is FeedLoading)
-            feedLiveData.value?.dropLast(1) ?: emptyList() else emptyList()
-        dropLast = dropLast.plus(l?.plus(FeedLoading()) ?: listOf(FeedLoading()))
-        feedLiveData.postValue(dropLast)
-    }
-
-    private fun errorToFeed(error: Boolean = true) {
-        feedErrorOld = error
-        Timber.d("errorToFeed($error)")
-        var fLD = feedLiveData.value?.toMutableList() ?: emptyList()
-        if (fLD.last() is FeedLoading) {
-            fLD = fLD.dropLast(1)
-        }
-        feedLiveData.postValue(fLD.plus(FeedLoading(isError = error)))
-    }
 
     fun vote(sr: Subreddit, newVote: Boolean?) {
-        if (!currentVoteJobs.containsKey(sr.id))
+        if (!currentVoteJobs.containsKey(sr.id)) {
+            currentVoteJobs[sr.id]?.cancel()
             currentVoteJobs[sr.id] = viewModelScope.launch {
                 runCatching {
-                    Timber.tag("Vote").d("Request sent, id ${sr.id}, new_vote $newVote")
                     repository.vote(sr.id, newVote)
                 }.onSuccess {
-                    val fLD = feedLiveData.value
-                    if (it is Subreddit && fLD != null) {
+                    val fLD = feedFlow.value
+                    if (it is Subreddit) {
                         val index = fLD.indexOf(sr)
-                        Timber.tag("Vote").d("Subreddit updated!")
                         val list = fLD.toMutableList()
                         list[index] = it
-                        feedLiveData.postValue(list)
+                        feedMutableFlow.emit(list)
                     }
                     currentVoteJobs.remove(sr.id)
-                    Timber.tag("Vote").d("Success")
                 }.onFailure {
-                    voteErrorMutable.value = true
-                    Timber.tag("Vote").d("Error")
-                    Timber.tag("Vote").e(it)
+                    voteErrorMutable.emit(true)
                     currentVoteJobs.remove(sr.id)
                 }
             }
+        }
     }
 
     fun retry() {
-        feedErrorOld = false
-        feedErrorMutable.value = false
-        appendToFeed(emptyList<FeedLoading>())
-        getBestFeed()
+        viewModelScope.launch { feedErrorMutable.emit(false) }
+        errorToFeed(false)
+        getMoreFeed()
     }
 
     fun onHandledVoteError() {
-        voteErrorMutable.value = false
+        viewModelScope.launch { voteErrorMutable.emit(false) }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        feedError.removeObserver(feedErrorObserver)
+
+    init {
+        viewModelScope.launch {
+            internalFeedFlow
+                .map { addToFeed(it) }
+                .collect { feedMutableFlow.emit(it) }
+        }
+        viewModelScope.launch {
+            feedError
+                .onEach { Timber.d("FeedError is $it") }
+                .collect { errorToFeed(it) }
+        }
     }
 
+    private fun addToFeed(it: List<*>): List<*> {
+        var dropLast = if (feedFlow.value.last() is FeedLoading)
+            feedFlow.value.dropLast(1) else emptyList()
+        dropLast = dropLast.plus(it.plus(FeedLoading()))
+        return dropLast
+    }
+
+    fun getMoreFeed() {
+        if (isLoadingFeed.value) return
+        viewModelScope.launch {
+            isLoadingFeedMutable.emit(true)
+            feedErrorMutable.emit(false)
+            currentFeedJob?.cancel()
+            currentFeedJob = viewModelScope.launch {
+                viewModelScope.launch {
+                    runCatching {
+                        repository.getBestFeed(after)
+                    }.onSuccess {
+                        internalFeedFlow.emit(it.first ?: emptyList<Subreddit>())
+                        after = it.second ?: after
+                        isLoadingFeedMutable.emit(false)
+                    }.onFailure {
+                        feedErrorMutable.emit(true)
+                        isLoadingFeedMutable.emit(false)
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun errorToFeed(error: Boolean = true) {
+        viewModelScope.launch {
+            var fLD = feedFlow.value.toMutableList()
+            if (fLD.last() is FeedLoading) {
+                fLD = fLD.dropLast(1).toMutableList()
+            }
+            feedMutableFlow.emit(fLD.plus(FeedLoading(isError = error)))
+        }
+    }
 }

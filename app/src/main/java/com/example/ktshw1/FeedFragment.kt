@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,9 @@ import com.example.ktshw1.model.*
 import com.example.ktshw1.networking.FeedViewModel
 import timber.log.Timber
 import com.example.ktshw1.utils.autoCleared
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val binding: FragmentFeedBinding by viewBinding(FragmentFeedBinding::bind)
@@ -26,17 +30,19 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         super.onViewCreated(view, savedInstanceState)
         createRecycler()
         Timber.d("Auth token is ${UserInfo.authToken}")
-        feedViewModel.voteError.observe(viewLifecycleOwner, {
-            if (it == true) {
+        feedAdapter.items = listOf(FeedLoading())
+        viewLifecycleOwner.lifecycleScope.launch {
+            feedViewModel.feedFlow.collect{
+                feedAdapter.items = it
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            feedViewModel.voteError.filter { it }.collect {
                 feedViewModel.onHandledVoteError()
                 Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
             }
-        })
-        feedAdapter.items = listOf(FeedLoading())
-        feedViewModel.feedList.observe(viewLifecycleOwner, {
-            Timber.d("update feedList!")
-            feedAdapter.items = it
-        })
+        }
+        loadMoreItems()
     }
 
 
@@ -67,6 +73,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     }
 
     private fun loadMoreItems() {
-        feedViewModel.getBestFeed()
+        feedViewModel.getMoreFeed()
     }
 }
