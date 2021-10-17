@@ -10,5 +10,6 @@
     <color name="background_main">#FFB9D1</color>
     <color name="background_second">#B4DEFF</color>
     <color name="vote">#F44336</color>
+    <color name="image_bg">#CDA6A6A6</color>
 
 </resources>

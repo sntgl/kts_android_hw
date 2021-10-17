@@ -15,4 +15,10 @@
     <string name="feed_interpoint">·</string>
     <string name="feed_more">···</string>
     <string name="vote_now">Голосуй!</string>
+    <string name="auth_canceled">Неудачная авторизация!</string>
+    <string name="loading_error">Ошибка загрузки</string>
+    <string name="tap_to_retry">Нажмите, чтобы попробовать снова\nПодержите, чтобы открыть в браузере</string>
+    <string name="vote_error">Не удалось проголосовать!</string>
+    <string name="feed_error">Ошибка подключения. Нажмите, чтобы попробовать снова...</string>
+    <string name="see_this_post">Посмотри c помощью BReddit!</string>
 </resources>

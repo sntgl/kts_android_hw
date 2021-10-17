@@ -2,21 +2,30 @@ package com.example.ktshw1.feed
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
-import com.example.ktshw1.model.FeedItem
+import com.example.ktshw1.model.FeedLoading
+import com.example.ktshw1.networking.FeedViewModel
+import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 
-class ListDelegatesAdapter
+class ListDelegatesAdapter(
+    private val feedViewModel: FeedViewModel,
+    share: (url: String) -> Any
+)
     : AsyncListDifferDelegationAdapter<Any>(DiffCallback()) {
 
     init {
-        delegatesManager.addDelegate(FeedItemDelegate(::notifyItemChanged))
-        delegatesManager.addDelegate(FeedLoadDelegate())
+        delegatesManager.addDelegate(FeedItemDelegate(
+            ::notifyItemChanged,
+            feedViewModel::vote,
+            share))
+        delegatesManager.addDelegate(FeedLoadDelegate(feedViewModel::retry, ::notifyItemChanged))
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Any>() {
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
             return oldItem.javaClass == newItem.javaClass && when (newItem) {
-                is FeedItem -> newItem.uuid == (oldItem as FeedItem).uuid
+                is Subreddit -> newItem.id == (oldItem as Subreddit).id
+                is FeedLoading -> newItem.id == (oldItem as FeedLoading).id
                 else -> true
             }
         }

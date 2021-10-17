@@ -15,4 +15,10 @@
     <string name="feed_interpoint">·</string>
     <string name="feed_more">···</string>
     <string name="vote_now">Vote now!</string>
+    <string name="auth_canceled">Login failed!</string>
+    <string name="loading_error">Loading error</string>
+    <string name="tap_to_retry">Tap to retry\nHold to open URL</string>
+    <string name="vote_error">Vote network error!</string>
+    <string name="feed_error">Network error. Tap to retry…</string>
+    <string name="see_this_post">See this via BReddit!</string>
 </resources>
