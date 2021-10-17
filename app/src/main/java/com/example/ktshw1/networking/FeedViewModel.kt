@@ -22,7 +22,8 @@ class FeedViewModel : ViewModel() {
         get() = feedErrorMutable
     var feedErrorOld = false
 
-    private var currentSearchJob: Job? = null
+    private var currentFeedJob: Job? = null
+    private var currentVoteJobs: MutableMap<String, Job> = emptyMap<String, Job>().toMutableMap()
 
     private var after: String = ""
 
@@ -46,9 +47,9 @@ class FeedViewModel : ViewModel() {
         if (isLoadingLiveData.value == true) return
         isLoadingLiveData.value = true
         feedErrorMutable.postValue(false)
-        currentSearchJob?.cancel()
+        currentFeedJob?.cancel()
         val timber = Timber.tag("LOAD")
-        currentSearchJob = viewModelScope.launch {
+        currentFeedJob = viewModelScope.launch {
             runCatching {
                 Timber.tag("LOAD").d("Request sent, after $after")
                 repository.getBestFeed(after)
@@ -85,26 +86,29 @@ class FeedViewModel : ViewModel() {
     }
 
     fun vote(sr: Subreddit, newVote: Boolean?) {
-        currentSearchJob = viewModelScope.launch {
-            runCatching {
-                Timber.tag("Vote").d("Request sent, id ${sr.id}, new_vote $newVote")
-                repository.vote(sr.id, newVote)
-            }.onSuccess {
-                val fLD = feedLiveData.value
-                if (it is Subreddit && fLD != null) {
-                    val index = fLD.indexOf(sr)
-                    Timber.tag("Vote").d("Subreddit updated!")
-                    val list = fLD.toMutableList()
-                    list[index] = it
-                    feedLiveData.postValue(list)
+        if (!currentVoteJobs.containsKey(sr.id))
+            currentVoteJobs[sr.id] = viewModelScope.launch {
+                runCatching {
+                    Timber.tag("Vote").d("Request sent, id ${sr.id}, new_vote $newVote")
+                    repository.vote(sr.id, newVote)
+                }.onSuccess {
+                    val fLD = feedLiveData.value
+                    if (it is Subreddit && fLD != null) {
+                        val index = fLD.indexOf(sr)
+                        Timber.tag("Vote").d("Subreddit updated!")
+                        val list = fLD.toMutableList()
+                        list[index] = it
+                        feedLiveData.postValue(list)
+                    }
+                    currentVoteJobs.remove(sr.id)
+                    Timber.tag("Vote").d("Success")
+                }.onFailure {
+                    voteErrorMutable.value = true
+                    Timber.tag("Vote").d("Error")
+                    Timber.tag("Vote").e(it)
+                    currentVoteJobs.remove(sr.id)
                 }
-                Timber.tag("Vote").d("Success")
-            }.onFailure {
-                voteErrorMutable.value = true
-                Timber.tag("Vote").d("Error")
-                Timber.tag("Vote").e(it)
             }
-        }
     }
 
     fun retry() {
