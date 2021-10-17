@@ -23,9 +23,8 @@ class FeedRepository {
     }
 
     private suspend fun getSubreddit(id: String): Subreddit? {
-        val response = Networking.redditApi.loadSubreddit(id)
-        val body = response.body()
-        return if (response.isSuccessful && body != null && body.data.children.isNotEmpty())
+        val body = Networking.redditApi.loadSubreddit(id)
+        return if (body.data.children.isNotEmpty())
             body.data.children[0].data.setContentType() else null
     }
 

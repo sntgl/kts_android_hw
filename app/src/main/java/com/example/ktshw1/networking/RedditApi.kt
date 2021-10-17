@@ -26,10 +26,8 @@ interface RedditApi {
     @GET("api/info")
     suspend fun loadSubreddit(
         @Query("id") id: String
-    ): Response<
-            ServerResponseWrapper<
-                ServerListingWrapper<
-                        ServerResponseWrapper<
-                                Subreddit>>>>
-
+    ):ServerResponseWrapper<
+            ServerListingWrapper<
+                    ServerResponseWrapper<
+                            Subreddit>>>
 }

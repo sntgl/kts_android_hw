@@ -36,10 +36,6 @@ class FeedViewModel : ViewModel() {
         Observer<Boolean> { if (it != feedErrorOld) errorToFeed(it) }
     }
 
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        Timber.d("Network caught $exception")
-    }
-
     init {
         feedError.observeForever(feedErrorObserver)
         getBestFeed()
@@ -52,7 +48,7 @@ class FeedViewModel : ViewModel() {
         feedErrorMutable.postValue(false)
         currentSearchJob?.cancel()
         val timber = Timber.tag("LOAD")
-        currentSearchJob = viewModelScope.launch(handler) {
+        currentSearchJob = viewModelScope.launch {
             runCatching {
                 Timber.tag("LOAD").d("Request sent, after $after")
                 repository.getBestFeed(after)
@@ -89,7 +85,7 @@ class FeedViewModel : ViewModel() {
     }
 
     fun vote(sr: Subreddit, newVote: Boolean?) {
-        currentSearchJob = viewModelScope.launch(handler) {
+        currentSearchJob = viewModelScope.launch {
             runCatching {
                 Timber.tag("Vote").d("Request sent, id ${sr.id}, new_vote $newVote")
                 repository.vote(sr.id, newVote)
