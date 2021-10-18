@@ -2,28 +2,29 @@ package com.example.ktshw1
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 import androidx.navigation.fragment.findNavController
-import com.example.ktshw1.databinding.FragmentAuthBinding
-import com.example.ktshw1.viewmodel.AuthViewModel
+import com.example.ktshw1.auth.AuthViewModel
 
 
 import android.content.Intent
-import androidx.core.view.isVisible
-import by.kirich1409.viewbindingdelegate.viewBinding
+import com.example.ktshw1.datastore.DatastoreViewModel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import com.example.ktshw1.utils.toast
-import timber.log.Timber
 
 
 class AuthFragment : Fragment(R.layout.fragment_auth) {
 
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: AuthViewModel by viewModel()
+    private val datastoreViewModel: DatastoreViewModel by viewModel()
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         bindViewModel()
+        datastoreViewModel.passOnBoarding()
     }
 
     override fun onResume() {
@@ -39,9 +40,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 ?.createTokenExchangeRequest()
             val exception = AuthorizationException.fromIntent(data)
             when {
-                tokenExchangeRequest != null && exception == null ->
+                tokenExchangeRequest != null && exception == null -> {
                     viewModel.onAuthCodeReceived(tokenExchangeRequest)
-                exception != null -> {
+
+                } exception != null -> {
                     viewModel.onAuthCodeFailed(exception)
                     viewModel.openLoginPage()
                 }
