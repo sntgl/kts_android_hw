@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.databinding.FragmentFeedBinding
+import com.example.ktshw1.datastore.DatastoreViewModel
 import com.example.ktshw1.feed.ListDelegatesAdapter
 import com.example.ktshw1.model.*
 import com.example.ktshw1.networking.FeedViewModel
@@ -30,6 +32,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private var feedAdapter: ListDelegatesAdapter by autoCleared()
     private val feedViewModel: FeedViewModel by viewModel()
     private val connectionViewModel: ConnectionViewModel by viewModel()
+    private val datastoreViewModel: DatastoreViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,7 +55,14 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         viewLifecycleOwner.lifecycleScope.launch {
             connectionViewModel.connectionFlow.collect{
                 showNetworkErrorPlate(it)
+            }
+        }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            datastoreViewModel.getApiKeyFlow.collect{
+                if (it == null || (it != UserInfo.authToken && UserInfo.authToken != null)) {
+                    datastoreViewModel.onReceivedApiKey(UserInfo.authToken ?: "")
+                }
             }
         }
     }
