@@ -5,9 +5,19 @@ import com.example.ktshw1.UserInfo
 import net.openid.appauth.*
 import timber.log.Timber
 
-class AuthRepository {
+interface AuthRepositoryInterface {
+    fun getAuthRequest(): AuthorizationRequest
+    fun performTokenRequest(
+        authService: AuthorizationService,
+        tokenRequest: TokenRequest,
+        onComplete: () -> Unit,
+        onError: () -> Unit
+    )
+}
 
-    fun getAuthRequest(): AuthorizationRequest {
+class AuthRepository: AuthRepositoryInterface {
+
+    override fun getAuthRequest(): AuthorizationRequest {
         val redirectUri = Uri.parse(CALLBACK_URL)
         val serviceConfiguration = AuthorizationServiceConfiguration(
             Uri.parse(AUTH_URI),
@@ -26,7 +36,7 @@ class AuthRepository {
             .build()
     }
 
-    fun performTokenRequest(
+    override fun performTokenRequest(
         authService: AuthorizationService,
         tokenRequest: TokenRequest,
         onComplete: () -> Unit,
