@@ -20,11 +20,12 @@ import com.example.ktshw1.utils.autoCleared
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val binding: FragmentFeedBinding by viewBinding(FragmentFeedBinding::bind)
     private var feedAdapter: ListDelegatesAdapter by autoCleared()
-    private val feedViewModel: FeedViewModel by viewModels()
+    private val feedViewModel: FeedViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -4,9 +4,13 @@ import com.example.ktshw1.networking.ServerListingWrapper
 import com.example.ktshw1.networking.ServerResponseWrapper
 import com.example.ktshw1.networking.Subreddit
 import com.example.ktshw1.networking.setContentType
-import kotlinx.coroutines.flow.*
 
-class FeedRepository {
+interface FeedRepositoryInterface {
+    suspend fun getBestFeed(after: String = ""): Pair<List<Subreddit>?, String?>
+    suspend fun vote(id: String, newVote: Boolean?): Subreddit?
+}
+
+class FeedRepository: FeedRepositoryInterface {
 
 
     private fun unwrap(wrapped: ServerListingWrapper<ServerResponseWrapper<Subreddit>>): List<Subreddit> {
@@ -15,8 +19,8 @@ class FeedRepository {
         return unwrappedList
     }
 
-    suspend fun getBestFeed(
-        after: String = ""
+    override suspend fun getBestFeed(
+        after: String
     ): Pair<List<Subreddit>?, String?> {
         val responseBody = Networking.redditApi.loadBestAfter(after).body()
         return if (responseBody != null)
@@ -30,7 +34,7 @@ class FeedRepository {
             body.data.children[0].data.setContentType() else null
     }
 
-    suspend fun vote(id: String, newVote: Boolean?): Subreddit? {
+    override suspend fun vote(id: String, newVote: Boolean?): Subreddit? {
         val dir = when (newVote) {
             null -> 0
             true -> 1
