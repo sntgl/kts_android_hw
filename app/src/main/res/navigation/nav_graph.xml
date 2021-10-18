@@ -3,7 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/onBoardingFragment">
+    app:startDestination="@id/startFragment">
+
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="com.example.ktshw1.StartFragment"
+        android:label="fragment_start"
+        tools:layout="@layout/fragment_start" >
+        <action
+            android:id="@+id/action_startFragment_to_onBoardingFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/onBoardingFragment"
+            app:destination="@id/onBoardingFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_authFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/authFragment"
+            app:destination="@id/authFragment" />
+        <action
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/mainFragment"
+            android:id="@+id/action_startFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/onBoardingFragment"
