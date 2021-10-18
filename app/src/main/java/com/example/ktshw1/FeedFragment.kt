@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.databinding.FragmentFeedBinding
 import com.example.ktshw1.feed.ListDelegatesAdapter
 import com.example.ktshw1.model.*
@@ -26,6 +29,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val binding: FragmentFeedBinding by viewBinding(FragmentFeedBinding::bind)
     private var feedAdapter: ListDelegatesAdapter by autoCleared()
     private val feedViewModel: FeedViewModel by viewModel()
+    private val connectionViewModel: ConnectionViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,6 +48,18 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             }
         }
         loadMoreItems()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            connectionViewModel.connectionFlow.collect{
+                showNetworkErrorPlate(it)
+
+            }
+        }
+    }
+
+    private fun showNetworkErrorPlate(isOk: Boolean) {
+        binding.feedNetworkError.isGone = !isOk
+        binding.feedNetworkError.isVisible = !isOk
     }
 
 

@@ -3,15 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background_main"
-    android:padding="5dp"
     tools:context=".LoginFragment">
+
+    <TextView
+        android:id="@+id/feed_network_error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/lb_grey"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="Network error!"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:padding="5dp"
+        android:visibility="gone"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/feed"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         tools:itemCount="5"
+        app:layout_constraintTop_toBottomOf="@id/feed_network_error"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_feed_multi"/>
 
 
