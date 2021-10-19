@@ -63,6 +63,7 @@ class FeedViewModel(
                 }.onSuccess {
                     val fLD = feedFlow.value
                     if (it is Subreddit) {
+                        d.insertFeedItem(it.toSubredditT())
                         val index = fLD.indexOf(sr)
                         val list = fLD.toMutableList()
                         list[index] = it
