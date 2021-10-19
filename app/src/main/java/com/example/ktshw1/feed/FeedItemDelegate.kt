@@ -129,9 +129,9 @@ class FeedItemDelegate(
                         if (!item.isTextPreviewed)
                             itemFeedUrl.text = item.text
                         else {
+                            //TODO ссылки как в md надо превратить в спаны((
                             val span = ClickToFullTextSpan(itemFeedUrl, item.text)
                             val spanText = itemFeedUrl.context.getString(R.string.get_more_text) + "(" + item.text.length.toString() + ")"
-                            Timber.d("span size is ${spanText.length}, string = '${spanText}'")
                             val spanClickable = (item.textPreview + spanText).toSpannable()
                             spanClickable
                                 .setSpan(
@@ -228,7 +228,6 @@ class FeedItemDelegate(
 
         private fun setVoteLoading(loading: Boolean = false) {
             binding.voteLoading.isVisible = loading
-            //Иначе почему-то уходит в gone и разметка съезжает
             if (loading)
                 binding.itemFeedVoteCounter.visibility = View.INVISIBLE
             else
