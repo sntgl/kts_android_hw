@@ -23,4 +23,5 @@
     <string name="see_this_post">Посмотри c помощью BReddit!</string>
     <string name="cached">Сабреддиты из кэша</string>
     <string name="network_fail">Сеть недоступна</string>
+    <string name="get_more_text">"…показать весь текст "</string>
 </resources>

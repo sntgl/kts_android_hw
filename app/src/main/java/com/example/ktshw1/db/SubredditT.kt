@@ -2,10 +2,9 @@ package com.example.ktshw1.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.example.ktshw1.networking.Subreddit
-import com.example.ktshw1.networking.setContentType
+import com.example.ktshw1.networking.prepare
 
 @Entity(
     tableName = SubredditContract.TABLE_NAME,
@@ -51,4 +50,4 @@ fun SubredditT.toSubreddit() = Subreddit(
         num_comments = num_comments,
         permalink = permalink,
         text = text
-    ).setContentType()
+    ).prepare()

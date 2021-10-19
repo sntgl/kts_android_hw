@@ -136,10 +136,8 @@ class FeedViewModel(
             currentFeedJob = viewModelScope.launch {
                 viewModelScope.launch {
                     runCatching {
-                        Timber.d("Trying to refresh..")
                         repository.getBestFeed("")
                     }.onSuccess {
-                        Timber.d("Refresh success..")
                         feedMutableFlow.emit(addToFeed(emptyList<Subreddit>()))
                         val list = it.first
                         if (list != null)
@@ -148,7 +146,6 @@ class FeedViewModel(
                         isCachedMutableFlow.emit(false)
                         isRefreshingFeedMutable.emit(false)
                     }.onFailure {
-                        Timber.d("Refresh fail..")
                         feedErrorMutable.emit(true)
                         isRefreshingFeedMutable.emit(false)
                     }

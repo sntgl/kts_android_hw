@@ -116,6 +116,9 @@ dependencies {
 
     //Swipe refresh layout
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    //For parse html text
+    implementation 'org.jsoup:jsoup:1.13.1'
 //    implementation "android.arch.lifecycle:extensions:1.1.1"
 //    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:2.4.0-beta01'
 //    // Jetpack Compose Integration

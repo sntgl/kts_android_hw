@@ -3,7 +3,7 @@ package com.example.ktshw1.networking
 class FeedRepository {
     private fun unwrap(wrapped: ServerListingWrapper<ServerResponseWrapper<Subreddit>>): List<Subreddit> {
         val unwrappedList = mutableListOf<Subreddit>()
-        wrapped.children.forEach { unwrappedList.add(it.data.setContentType()) }
+        wrapped.children.forEach { unwrappedList.add(it.data.prepare()) }
         return unwrappedList
     }
 
@@ -19,7 +19,7 @@ class FeedRepository {
     private suspend fun getSubreddit(id: String): Subreddit? {
         val body = Networking.redditApi.loadSubreddit(id)
         return if (body.data.children.isNotEmpty())
-            body.data.children[0].data.setContentType() else null
+            body.data.children[0].data.prepare() else null
     }
 
     suspend fun vote(id: String, newVote: Boolean?): Subreddit? {
