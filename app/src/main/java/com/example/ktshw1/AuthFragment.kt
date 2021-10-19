@@ -3,17 +3,17 @@ package com.example.ktshw1
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 import androidx.navigation.fragment.findNavController
 import com.example.ktshw1.auth.AuthViewModel
-
-
 import android.content.Intent
+import androidx.lifecycle.lifecycleScope
 import com.example.ktshw1.datastore.DatastoreViewModel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import com.example.ktshw1.utils.toast
-import org.koin.android.ext.android.inject
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 
 class AuthFragment : Fragment(R.layout.fragment_auth) {
@@ -21,11 +21,9 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private val viewModel: AuthViewModel by viewModel()
     private val datastoreViewModel: DatastoreViewModel by viewModel()
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         bindViewModel()
-        datastoreViewModel.passOnBoarding()
     }
 
     override fun onResume() {
@@ -59,8 +57,21 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         viewModel.openAuthPageLiveData.observe(viewLifecycleOwner, ::openAuthPage)
         viewModel.toastLiveData.observe(viewLifecycleOwner, ::toast)
         viewModel.authSuccessLiveData.observe(viewLifecycleOwner) {
-            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            datastoreViewModel.onReceivedApiKey(
+                UserInfo.authToken,
+                UserInfo.expires,
+                UserInfo.refreshToken
+            )
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            datastoreViewModel.getApiKeyFlow
+                .filter {
+                    it == UserInfo.authToken && it != null && it != ""
+                }.collect {
+                    findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                }
+        }
+
     }
 
 
