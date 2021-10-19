@@ -2,7 +2,6 @@ package com.example.ktshw1.networking
 
 import androidx.lifecycle.*
 import com.example.ktshw1.SubredditParser
-import com.example.ktshw1.db.SubredditT
 import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -82,12 +81,6 @@ class FeedViewModel(
                     val l = SubredditParser().toDataBase(it)
                     Timber.d("Result have ${l.size} items")
                     d.insertFeedItems(l)
-//                    val s: MutableList<SubredditT> = emptyList<SubredditT>().toMutableList()
-//                    it.forEach { item ->
-//                        if (item is Subreddit)
-//                            s.add(SubredditT(item.id))
-//                    }
-//                    d.insertFeedItems(s)
                 }
                 .map { addToFeed(it) }
                 .collect { feedMutableFlow.emit(it) }
