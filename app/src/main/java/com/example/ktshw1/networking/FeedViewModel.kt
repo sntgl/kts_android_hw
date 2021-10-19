@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.model.FeedError
 import com.example.ktshw1.model.FeedLastItem
+import com.example.ktshw1.utils.SubredditParser
 import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*

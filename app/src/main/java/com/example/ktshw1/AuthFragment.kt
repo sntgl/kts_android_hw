@@ -8,6 +8,7 @@ import com.example.ktshw1.auth.AuthViewModel
 import android.content.Intent
 import androidx.lifecycle.lifecycleScope
 import com.example.ktshw1.datastore.DatastoreViewModel
+import com.example.ktshw1.model.UserInfo
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import com.example.ktshw1.utils.toast

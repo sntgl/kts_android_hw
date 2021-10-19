@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.ktshw1.datastore.DatastoreViewModel
-import com.example.ktshw1.networking.FeedViewModel
+import com.example.ktshw1.model.UserInfo
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
