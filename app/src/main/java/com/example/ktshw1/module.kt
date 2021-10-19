@@ -12,7 +12,6 @@ import net.openid.appauth.AuthorizationService
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import studio.kts.android.school.lection4.networking.data.FeedRepository
 
 val appModule = module {
     single { FeedRepository() }
