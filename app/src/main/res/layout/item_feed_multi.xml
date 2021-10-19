@@ -185,7 +185,21 @@
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@id/item_feed_up_button"
         app:layout_constraintTop_toBottomOf="@id/item_feed_image_container"
-        tools:text="100" />
+        tools:text="100"
+        android:visibility="invisible"
+        />
+
+    <ProgressBar
+        android:id="@+id/vote_loading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="5dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/item_feed_vote_counter"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@id/item_feed_vote_counter"
+        app:layout_constraintRight_toRightOf="@id/item_feed_vote_counter"
+        app:layout_constraintTop_toTopOf="@id/item_feed_vote_counter" />
 
     <ImageView
         android:id="@+id/item_feed_down_button"

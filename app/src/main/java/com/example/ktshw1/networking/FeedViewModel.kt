@@ -6,6 +6,7 @@ import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import java.util.*
 
 
 class FeedViewModel(
@@ -64,6 +65,13 @@ class FeedViewModel(
                     currentVoteJobs.remove(sr.id)
                 }.onFailure {
                     voteErrorMutable.emit(true)
+                    val fLD = feedFlow.value
+                    val index = fLD.indexOf(sr)
+                    val list = fLD.toMutableList()
+                    val ss = sr.copy()
+                    ss.random_id = UUID.randomUUID()
+                    list[index] = ss
+                    feedMutableFlow.emit(list)
                     currentVoteJobs.remove(sr.id)
                 }
             }
