@@ -45,7 +45,10 @@ fun Subreddit.prepare(): Subreddit {
     if (item.text.startsWith("/r/"))
         item.text = ""
     else if (text != "") {
-        item.text = item.text.replace("\n\n", "\n")
+        item.text = item.text
+            .replace("\n\n", "\n")
+            .replace("&amp;", "")
+            .replace("#x200B", "")
         if (item.text.length > 200) {
             item.textPreview = item.text.substring(0, 199)
             item.isTextPreviewed = true
