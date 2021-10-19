@@ -16,5 +16,6 @@ object SubredditContract {
         const val THUMBNAIL = "thumbnail"
         const val NUM_COMMENTS = "num_comments"
         const val PERMALINK = "permalink"
+        const val TEXT = "text"
     }
 }
