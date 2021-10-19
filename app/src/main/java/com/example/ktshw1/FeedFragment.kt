@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.datastore.dataStore
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -53,7 +54,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             }
         }
         feedViewModel.refreshFeed()
-
         viewLifecycleOwner.lifecycleScope.launch {
 //            connectionViewModel.connectionFlow.collect {
 //                Timber.d("Plate: networkError = $it" )
@@ -85,6 +85,11 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 binding.feedRefresh.isRefreshing = it
             }
         }
+        datastoreViewModel.onReceivedApiKey(
+            UserInfo.authToken,
+            UserInfo.expires,
+            UserInfo.refreshToken
+        )
     }
 
     private fun showErrorPlate(show: Boolean, text: String = "") {
@@ -122,16 +127,9 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             Timber.i("Hey i want to refresh!!")
             feedViewModel.refreshFeed()
         }
-
-//        binding.feedRefresh.post { binding.feedRefresh.isRefreshing = true }
-
     }
 
     private fun loadMoreItems() {
         feedViewModel.getMoreFeed()
     }
-
-//    private fun loadTopItems() {
-//        feedViewModel.getTopFeed()
-//    }
 }

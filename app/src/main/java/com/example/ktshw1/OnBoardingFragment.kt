@@ -28,7 +28,12 @@ class OnBoardingFragment : Fragment(R.layout.fragment_on_boarding) {
         binding.onboardingViewpager.adapter = OnBoardingAdapter()
         binding.onboardingViewpagerIndicator.attachToPager(binding.onboardingViewpager)
         binding.startButton.setOnClickListener {
-            findNavController().navigate(R.id.action_onBoardingFragment_to_loginFragment)
+            datastoreViewModel.passOnBoarding()
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            datastoreViewModel.onBoardingPassedFlow.filter { it == true }.collect {
+                findNavController().navigate(R.id.action_onBoardingFragment_to_loginFragment)
+            }
         }
     }
 }

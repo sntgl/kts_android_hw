@@ -17,12 +17,9 @@ interface SubredditDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFeedItem(items: SubredditT)
 
-    @Query("SELECT COUNT(*) " +
+    @Query("SELECT * " +
             "FROM ${SubredditContract.TABLE_NAME} " +
-            "ORDER BY ${SubredditContract.Columns.CREATED} ASC")
-    fun observeCount(): Flow<Int>
-
-    @Query("SELECT * FROM ${SubredditContract.TABLE_NAME}")
+            "ORDER BY ${SubredditContract.Columns.CREATED} DESC")
     fun observeSubreddits(): Flow<List<SubredditT>>
 
 }
