@@ -35,7 +35,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private var feedAdapter: ListDelegatesAdapter by autoCleared()
     private val feedViewModel: FeedViewModel by viewModel()
     private val connectionViewModel: ConnectionViewModel by viewModel()
-    private val datastoreViewModel: DatastoreViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,12 +54,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
         feedViewModel.refreshFeed()
         viewLifecycleOwner.lifecycleScope.launch {
-//            connectionViewModel.connectionFlow.collect {
-//                Timber.d("Plate: networkError = $it" )
-//            }
-//            feedViewModel.isCachedFlow.collect {
-//                Timber.d("Plate: cached = $it" )
-//            }
 
             combine(connectionViewModel.connectionFlow, feedViewModel.isCachedFlow) {
                 conn, cached -> conn to cached
@@ -77,19 +70,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            datastoreViewModel.getApiKeyFlow.collect {}
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
             feedViewModel.isRefreshingFeed.filter { !it }.collect {
                 binding.feedRefresh.isRefreshing = it
             }
         }
-        datastoreViewModel.onReceivedApiKey(
-            UserInfo.authToken,
-            UserInfo.expires,
-            UserInfo.refreshToken
-        )
     }
 
     private fun showErrorPlate(show: Boolean, text: String = "") {
