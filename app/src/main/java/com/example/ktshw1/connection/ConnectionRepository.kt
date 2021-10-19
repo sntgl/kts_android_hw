@@ -4,17 +4,11 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import timber.log.Timber
 
-interface ConnectionRepositoryInterface {
-    fun checkConnection(): Boolean
-}
-
-class ConnectionRepository(private val context: Context) : ConnectionRepositoryInterface {
-    override fun checkConnection(): Boolean {
+class ConnectionRepository(private val context: Context) {
+    fun checkConnection(): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Timber.d("Current computation thread = ${Thread.currentThread()}")
             val nw = cm.activeNetwork ?: return false
             val actNw = cm.getNetworkCapabilities(nw) ?: return false
             when {

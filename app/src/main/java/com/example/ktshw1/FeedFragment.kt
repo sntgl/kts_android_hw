@@ -59,11 +59,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            datastoreViewModel.getApiKeyFlow.collect{
-                if (it == null || (it != UserInfo.authToken && UserInfo.authToken != null)) {
-                    datastoreViewModel.onReceivedApiKey(UserInfo.authToken ?: "")
-                }
-            }
+            datastoreViewModel.getApiKeyFlow.collect{}
         }
     }
 

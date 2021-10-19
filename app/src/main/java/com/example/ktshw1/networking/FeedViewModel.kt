@@ -5,12 +5,11 @@ import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import studio.kts.android.school.lection4.networking.data.FeedRepository
-import studio.kts.android.school.lection4.networking.data.FeedRepositoryInterface
 import timber.log.Timber
 
 
 class FeedViewModel(
-    private val repository: FeedRepositoryInterface
+    private val repository: FeedRepository
 ) : ViewModel() {
 
     private val isLoadingFeedMutable = MutableStateFlow(false)

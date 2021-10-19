@@ -1,21 +1,19 @@
 package com.example.ktshw1.auth
 
-import android.app.Application
 import android.content.Intent
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ktshw1.R
 import com.example.ktshw1.repository.AuthRepository
-import com.example.ktshw1.repository.AuthRepositoryInterface
 import com.example.ktshw1.utils.SingleLiveEvent
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.TokenRequest
+import timber.log.Timber
 
 class AuthViewModel(
-    private val authRepository: AuthRepositoryInterface,
+    private val authRepository: AuthRepository,
     private val authService : AuthorizationService
 ) : ViewModel() {
 
@@ -37,6 +35,8 @@ class AuthViewModel(
         get() = authSuccessLiveEvent
 
     fun onAuthCodeFailed(exception: AuthorizationException) {
+        //TODO поч-то не ретраит иногда
+        Timber.d("Auth fail:\n${exception.error}\n${exception.errorDescription}")
         toastLiveEvent.postValue(R.string.auth_canceled)
     }
 

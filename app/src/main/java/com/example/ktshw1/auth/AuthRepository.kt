@@ -4,20 +4,11 @@ import android.net.Uri
 import com.example.ktshw1.UserInfo
 import net.openid.appauth.*
 import timber.log.Timber
+import java.util.*
 
-interface AuthRepositoryInterface {
-    fun getAuthRequest(): AuthorizationRequest
-    fun performTokenRequest(
-        authService: AuthorizationService,
-        tokenRequest: TokenRequest,
-        onComplete: () -> Unit,
-        onError: () -> Unit
-    )
-}
+class AuthRepository {
 
-class AuthRepository: AuthRepositoryInterface {
-
-    override fun getAuthRequest(): AuthorizationRequest {
+    fun getAuthRequest(): AuthorizationRequest {
         val redirectUri = Uri.parse(CALLBACK_URL)
         val serviceConfiguration = AuthorizationServiceConfiguration(
             Uri.parse(AUTH_URI),
@@ -36,7 +27,25 @@ class AuthRepository: AuthRepositoryInterface {
             .build()
     }
 
-    override fun performTokenRequest(
+    fun getRefreshRequest(): AuthorizationRequest {
+        val redirectUri = Uri.parse(CALLBACK_URL)
+        val serviceConfiguration = AuthorizationServiceConfiguration(
+            Uri.parse(AUTH_URI),
+            Uri.parse(TOKEN_URI)
+        )
+
+
+        return AuthorizationRequest.Builder(
+            serviceConfiguration,
+            CLIENT_ID,
+            RESPONSE_TYPE,
+            redirectUri
+        )
+            .setAdditionalParameters(mapOf("grant_type" to "refresh_token"))
+            .build()
+    }
+
+    fun performTokenRequest(
         authService: AuthorizationService,
         tokenRequest: TokenRequest,
         onComplete: () -> Unit,
@@ -47,8 +56,12 @@ class AuthRepository: AuthRepositoryInterface {
             when {
                 response != null -> {
                     UserInfo.authToken = response.accessToken.orEmpty()
+                    UserInfo.refreshToken = response.refreshToken.orEmpty()
+                    UserInfo.expires = response.accessTokenExpirationTime
                     val accessToken = response.accessToken.orEmpty()
-                    Timber.d("Token is $accessToken")
+                    val refreshToken = response.refreshToken.orEmpty()
+                    Timber.d("Token is $accessToken\nRefresh is $refreshToken\nExpires:\t${response.accessTokenExpirationTime}\nNow:\t\t${System.currentTimeMillis()}")
+
                     onComplete()
                 }
                 else -> onError()
