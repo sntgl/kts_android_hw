@@ -1,8 +1,11 @@
 package com.example.ktshw1.networking
 
+import androidx.core.text.HtmlCompat
 import com.example.ktshw1.db.SubredditT
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.util.*
 
 @JsonClass(generateAdapter = true)
@@ -22,7 +25,11 @@ data class Subreddit(
     val num_comments: Int, //
     val permalink: String,
     @Json(name = "selftext")
-    val text: String,
+    var text: String,
+    @Transient
+    var textPreview: String = "",
+    @Transient
+    var isTextPreviewed: Boolean = false,
     @Transient
     var content_type: Content = Content.NONE,
     @Transient
@@ -33,21 +40,34 @@ data class Subreddit(
     }
 }
 
-fun Subreddit.setContentType(): Subreddit {
+fun Subreddit.prepare(): Subreddit {
     val item: Subreddit = this
-    if (item.url.endsWith(".jpg", true) ||
-        item.url.endsWith(".jpeg", true) ||
-        item.url.endsWith(".png", true) ||
-        item.url.contains("imgur.com", true)
-    )
-        item.content_type = Subreddit.Content.IMAGE
-    else if (!(item.url.contains("/comments/") &&
-                item.url.contains("reddit.com")) &&
-                item.url != "self")
-        item.content_type = Subreddit.Content.URL
-    else if (item.text != "")
-        Subreddit.Content.TEXT
-    else item.content_type = Subreddit.Content.NONE
+    if (item.text.startsWith("/r/"))
+        item.text = ""
+    else if (text != "") {
+        item.text = item.text.replace("\n\n", "\n")
+        if (item.text.length > 200) {
+            item.textPreview = item.text.substring(0, 199)
+            item.isTextPreviewed = true
+        } else if (item.text.count {"\n".contains(it)} > 3) {
+            item.textPreview = item.text.substringBefore("\n")
+            item.isTextPreviewed = true
+        }
+    }
+
+    item.content_type = if (item.url.endsWith(".jpg", true) ||
+            item.url.endsWith(".jpeg", true) ||
+            item.url.endsWith(".png", true) ||
+            item.url.contains("imgur.com", true)
+        )
+            Subreddit.Content.IMAGE
+        else if (!(item.url.contains("/comments/") &&
+                    item.url.contains("reddit.com")) &&
+                    item.url != "self")
+            Subreddit.Content.URL
+        else if (item.text != "")
+            Subreddit.Content.TEXT
+        else Subreddit.Content.NONE
     return item
 }
 

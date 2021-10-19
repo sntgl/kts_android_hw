@@ -117,6 +117,9 @@ dependencies {
     //Swipe refresh layout
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
+    //For parse html text
+    implementation 'org.jsoup:jsoup:1.13.1'
+
     //Kotlin coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
 }

@@ -20,6 +20,7 @@
         <entry key="app/src/main/res/layout/item_feed_image.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_feed_multi.xml" value="0.5" />
         <entry key="app/src/main/res/layout/item_feed_multi.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_feed_multi.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_feed_text.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_loading.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_onboarding_feature.xml" value="0.165" />

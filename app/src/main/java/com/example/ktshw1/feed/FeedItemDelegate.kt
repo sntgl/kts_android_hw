@@ -22,8 +22,11 @@ import androidx.core.content.ContextCompat.startActivity
 
 import android.content.Intent
 import android.net.Uri
-import androidx.core.view.isGone
+import android.text.Spanned
+import android.widget.TextView
+import androidx.core.text.toSpannable
 import androidx.core.view.isVisible
+import com.example.ktshw1.utils.ClickToFullTextSpan
 
 
 class FeedItemDelegate(
@@ -114,9 +117,31 @@ class FeedItemDelegate(
                 itemFeedImage.visibility = View.GONE
                 itemFeedProgressbar.visibility = View.GONE
                 itemFeedRetryPlaceholder.visibility = View.GONE
+
                 when (item.content_type) {
                     Subreddit.Content.URL -> {
                         itemFeedUrl.text = item.url
+                        itemFeedUrl.visibility = View.VISIBLE
+
+                    }
+                    Subreddit.Content.TEXT -> {
+                        Timber.d("TEXT!!! ${item.text}")
+                        if (!item.isTextPreviewed)
+                            itemFeedUrl.text = item.text
+                        else {
+                            val span = ClickToFullTextSpan(itemFeedUrl, item.text)
+                            val spanText = itemFeedUrl.context.getString(R.string.get_more_text) + "(" + item.text.length.toString() + ")"
+                            Timber.d("span size is ${spanText.length}, string = '${spanText}'")
+                            val spanClickable = (item.textPreview + spanText).toSpannable()
+                            spanClickable
+                                .setSpan(
+                                    span,
+                                    item.textPreview.length,
+                                    item.textPreview.length + spanText.length,
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                            itemFeedUrl.setText(spanClickable, TextView.BufferType.SPANNABLE)
+                        }
                         itemFeedUrl.visibility = View.VISIBLE
                     }
                     Subreddit.Content.IMAGE -> loadImage(item)
