@@ -1,5 +1,6 @@
 package com.example.ktshw1.networking
 
+import com.example.ktshw1.db.SubredditT
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -42,3 +43,17 @@ fun Subreddit.setContentType(): Subreddit {
     else item.content_type = Subreddit.Content.NONE
     return item
 }
+
+fun Subreddit.toSubredditT() = SubredditT(
+        id = id,
+        author = author,
+        created = created,
+        score = score,
+        subreddit_name = subreddit_name,
+        title = title,
+        url = url,
+        vote = vote,
+        thumbnail = thumbnail,
+        num_comments = num_comments,
+        permalink = permalink
+    )

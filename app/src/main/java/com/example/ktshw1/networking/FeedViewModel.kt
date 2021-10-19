@@ -1,10 +1,11 @@
 package com.example.ktshw1.networking
 
 import androidx.lifecycle.*
+import com.example.ktshw1.SubredditParser
+import com.example.ktshw1.db.SubredditT
 import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import studio.kts.android.school.lection4.networking.data.FeedRepository
 import timber.log.Timber
 
 
@@ -33,7 +34,7 @@ class FeedViewModel(
     val feedFlow: StateFlow<List<*>>
         get() = feedMutableFlow
 
-    private val internalFeedFlow = MutableStateFlow<List<*>>(emptyList<Subreddit>())
+    private val internalFeedFlow = MutableStateFlow<List<Subreddit>>(emptyList())
 
 
     fun vote(sr: Subreddit, newVote: Boolean?) {
@@ -69,10 +70,24 @@ class FeedViewModel(
         viewModelScope.launch { voteErrorMutable.emit(false) }
     }
 
+    private val d = Database.instance.feedItemDao()
 
     init {
         viewModelScope.launch {
             internalFeedFlow
+//                .flowOn(Dispatchers.IO) //TODO
+                .onEach {
+                    Timber.d("Got ${it.size} items")
+                    val l = SubredditParser().toDataBase(it)
+                    Timber.d("Result have ${l.size} items")
+                    d.insertFeedItems(l)
+//                    val s: MutableList<SubredditT> = emptyList<SubredditT>().toMutableList()
+//                    it.forEach { item ->
+//                        if (item is Subreddit)
+//                            s.add(SubredditT(item.id))
+//                    }
+//                    d.insertFeedItems(s)
+                }
                 .map { addToFeed(it) }
                 .collect { feedMutableFlow.emit(it) }
         }

@@ -1,9 +1,4 @@
-package studio.kts.android.school.lection4.networking.data
-
-import com.example.ktshw1.networking.ServerListingWrapper
-import com.example.ktshw1.networking.ServerResponseWrapper
-import com.example.ktshw1.networking.Subreddit
-import com.example.ktshw1.networking.setContentType
+package com.example.ktshw1.networking
 
 class FeedRepository {
     private fun unwrap(wrapped: ServerListingWrapper<ServerResponseWrapper<Subreddit>>): List<Subreddit> {
