@@ -131,15 +131,13 @@ class FeedViewModel(
     }
 
 
-    private suspend fun addToFeed(it: List<*>): List<*> {
+    private fun addToFeed(it: List<*>): List<*> {
         var dropLast =
             if (!isRefreshingFeed.value && feedFlow.value.last() is FeedLoading) {
                     feedFlow.value.dropLast(1)
             } else { feedMutableFlow.value }
         dropLast = dropLast.plus(it.plus(FeedLoading()))
         Timber.i("Current list size is ${dropLast.size}")
-//        if (isRefreshingFeed.value)
-//            isRefreshingFeedMutable.emit(false)
         return dropLast
     }
 
@@ -225,27 +223,26 @@ class FeedViewModel(
         }
         viewModelScope.launch {
             internalFeedFlow
-//                .flowOn(Dispatchers.IO) //TODO
                 .onEach {
                     Timber.d("Got ${it.size} items")
                     val l = parser.toDataBase(it)
                     Timber.d("Result have ${l.size} items")
                     db.insertFeedItems(l)
                 }
-//                .map { inList -> //unique check TODO delete
-//                    val list = emptyList<Subreddit>().toMutableList()
-//                    val ids = List<String>(feedFlow.value.size) {
-//                        if (feedFlow.value[it] is Subreddit)
-//                            (feedFlow.value[it] as Subreddit).id
-//                        else
-//                            ""
-//                    }
-//                    inList.forEach {
-//                        if (!ids.contains(it.id))
-//                            list.add(it)
-//                    }
-//                    list
-//                }
+                .map { inList -> //unique check может убрать
+                    val list = emptyList<Subreddit>().toMutableList()
+                    val ids = List(feedFlow.value.size) {
+                        if (feedFlow.value[it] is Subreddit)
+                            (feedFlow.value[it] as Subreddit).id
+                        else
+                            ""
+                    }
+                    inList.forEach {
+                        if (!ids.contains(it.id))
+                            list.add(it)
+                    }
+                    list
+                }
                 .map { addToFeed(it) }
                 .collect { feedMutableFlow.emit(it) }
         }
