@@ -21,4 +21,6 @@
     <string name="vote_error">Vote network error!</string>
     <string name="feed_error">Network error. Tap to retry…</string>
     <string name="see_this_post">See this via BReddit!</string>
+    <string name="cached">Cached subreddits</string>
+    <string name="network_fail">Network is unavailable</string>
 </resources>

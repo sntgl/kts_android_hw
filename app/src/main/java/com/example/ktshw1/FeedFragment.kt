@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.databinding.FragmentFeedBinding
@@ -23,6 +24,7 @@ import com.example.ktshw1.networking.FeedViewModel
 import timber.log.Timber
 import com.example.ktshw1.utils.autoCleared
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -40,7 +42,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         Timber.d("Auth token is ${UserInfo.authToken}")
         feedAdapter.items = listOf(FeedLoading())
         viewLifecycleOwner.lifecycleScope.launch {
-            feedViewModel.feedFlow.collect{
+            feedViewModel.feedFlow.collect {
                 feedAdapter.items = it
             }
         }
@@ -50,32 +52,55 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
             }
         }
-        loadMoreItems()
+        feedViewModel.refreshFeed()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            connectionViewModel.connectionFlow.collect{
-                showNetworkErrorPlate(it)
+//            connectionViewModel.connectionFlow.collect {
+//                Timber.d("Plate: networkError = $it" )
+//            }
+//            feedViewModel.isCachedFlow.collect {
+//                Timber.d("Plate: cached = $it" )
+//            }
+
+            combine(connectionViewModel.connectionFlow, feedViewModel.isCachedFlow) {
+                conn, cached -> conn to cached
+            }.collect { (conn, cached) ->
+                Timber.d("Plate: cached = $cached, networkError = $conn" )
+                if (cached) {
+                    showErrorPlate(true, getString(R.string.cached))
+                } else if (!conn) {
+                    showErrorPlate(true, getString(R.string.network_fail))
+                } else {
+                    showErrorPlate(false)
+                }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            datastoreViewModel.getApiKeyFlow.collect{}
+            datastoreViewModel.getApiKeyFlow.collect {}
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            feedViewModel.isRefreshingFeed.filter { !it }.collect {
+                binding.feedRefresh.isRefreshing = it
+            }
         }
     }
 
-    private fun showNetworkErrorPlate(isOk: Boolean) {
-        binding.feedNetworkError.isGone = !isOk
-        binding.feedNetworkError.isVisible = !isOk
+    private fun showErrorPlate(show: Boolean, text: String = "") {
+        binding.feedErrorPlate.isGone = !show
+        binding.feedErrorPlate.isVisible = show
+        if (show) binding.feedErrorPlate.text = text
     }
-
 
     private fun createRecycler() {
 
         feedAdapter = ListDelegatesAdapter(feedViewModel) { url ->
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT,
-                    getString(R.string.see_this_post)+"\n"+getString(R.string.reddit_base_url)+ url
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    getString(R.string.see_this_post) + "\n" + getString(R.string.reddit_base_url) + url
                 )
             }
             startActivity(Intent.createChooser(intent, null))
@@ -93,9 +118,20 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             addItemDecoration(DividerItemDecoration(context, orientation))
             setHasFixedSize(true)
         }
+        binding.feedRefresh.setOnRefreshListener {
+            Timber.i("Hey i want to refresh!!")
+            feedViewModel.refreshFeed()
+        }
+
+//        binding.feedRefresh.post { binding.feedRefresh.isRefreshing = true }
+
     }
 
     private fun loadMoreItems() {
         feedViewModel.getMoreFeed()
     }
+
+//    private fun loadTopItems() {
+//        feedViewModel.getTopFeed()
+//    }
 }

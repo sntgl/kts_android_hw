@@ -5,13 +5,13 @@ import com.example.ktshw1.db.toSubreddit
 import com.example.ktshw1.networking.Subreddit
 import com.example.ktshw1.networking.toSubredditT
 
+
 class SubredditParser {
-    fun fromDataBase(l: List<*>) =
-        MutableList(l.size) {
-            if (l[it] is SubredditT)
-                (l[it] as SubredditT).toSubreddit()
-        }.toList() as List<Subreddit>
+    fun fromDataBase(l: List<*>): List<Subreddit> = MutableList(l.size) {
+        (l[it] as SubredditT).toSubreddit()
+    }.toList()
+
     fun toDataBase(l: List<*>): List<SubredditT> = MutableList(l.size) {
-            (l[it] as Subreddit).toSubredditT()
-        }.toList()
+        (l[it] as Subreddit).toSubredditT()
+    }.toList()
 }

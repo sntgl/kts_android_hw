@@ -21,4 +21,6 @@
     <string name="vote_error">Не удалось проголосовать!</string>
     <string name="feed_error">Ошибка подключения. Нажмите, чтобы попробовать снова...</string>
     <string name="see_this_post">Посмотри c помощью BReddit!</string>
+    <string name="cached">Сабреддиты из кэша</string>
+    <string name="network_fail">Сеть недоступна</string>
 </resources>

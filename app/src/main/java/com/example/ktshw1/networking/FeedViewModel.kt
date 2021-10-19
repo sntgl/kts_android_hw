@@ -2,6 +2,8 @@ package com.example.ktshw1.networking
 
 import androidx.lifecycle.*
 import com.example.ktshw1.SubredditParser
+import com.example.ktshw1.connection.ConnectionRepository
+import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.db.SubredditT
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,10 +33,16 @@ import kotlin.collections.toMutableMap
 
 class FeedViewModel(
     private val repository: FeedRepository,
+    private val parser: SubredditParser,
     private val connectionViewModel: ConnectionViewModel
 ) : ViewModel() {
+    private val db = Database.instance.feedItemDao()
 
     private val isLoadingFeedMutable = MutableStateFlow(false)
+
+    private val isRefreshingFeedMutable = MutableStateFlow(false)
+    val isRefreshingFeed: StateFlow<Boolean>
+        get() = isRefreshingFeedMutable
 
     private val voteErrorMutable = MutableStateFlow(false)
     val voteError: StateFlow<Boolean>
@@ -46,6 +54,10 @@ class FeedViewModel(
     private var currentVoteJobs: MutableMap<String, Job> = emptyMap<String, Job>().toMutableMap()
 
     private var after: String = ""
+
+    private val isCachedMutableFlow = MutableStateFlow<Boolean>(false)
+    val isCachedFlow: StateFlow<Boolean>
+        get() = isCachedMutableFlow
 
     private val feedMutableFlow = MutableStateFlow<MutableList<*>>(mutableListOf(FeedLoading()))
     val feedFlow: StateFlow<MutableList<*>>
@@ -63,7 +75,7 @@ class FeedViewModel(
                 }.onSuccess {
                     val fLD = feedFlow.value
                     if (it is Subreddit) {
-                        d.insertFeedItem(it.toSubredditT())
+                        db.insertFeedItem(it.toSubredditT())
                         val index = fLD.indexOf(sr)
                         val list = fLD.toMutableList()
                         list[index] = it
@@ -88,7 +100,6 @@ class FeedViewModel(
         viewModelScope.launch { voteErrorMutable.emit(false) }
     }
 
-    private val d = Database.instance.feedItemDao()
 
     init {
         viewModelScope.launch {
@@ -119,10 +130,16 @@ class FeedViewModel(
         }
     }
 
-    private fun addToFeed(it: List<*>): List<*> {
-        var dropLast = if (feedMutableFlow.value.last() is FeedLastItem)
-            feedMutableFlow.value.dropLast(1) else feedMutableFlow.value
+
+    private suspend fun addToFeed(it: List<*>): List<*> {
+        var dropLast =
+            if (!isRefreshingFeed.value && feedFlow.value.last() is FeedLoading) {
+                    feedFlow.value.dropLast(1)
+            } else { feedMutableFlow.value }
         dropLast = dropLast.plus(it.plus(FeedLoading()))
+        Timber.i("Current list size is ${dropLast.size}")
+//        if (isRefreshingFeed.value)
+//            isRefreshingFeedMutable.emit(false)
         return dropLast
     }
 
@@ -139,10 +156,42 @@ class FeedViewModel(
                     }.onSuccess {
                         internalFeedFlow.emit(it.first ?: emptyList<Subreddit>())
                         after = it.second ?: after
+                        isCachedMutableFlow.emit(false)
                         isLoadingFeedMutable.emit(false)
                     }.onFailure {
                         feedErrorMutable.emit(true)
                         isLoadingFeedMutable.emit(false)
+                    }
+                }
+            }
+        }
+
+    }
+
+    fun refreshFeed() {
+        if (isRefreshingFeed.value) return
+        viewModelScope.launch {
+            isRefreshingFeedMutable.emit(true)
+            feedErrorMutable.emit(false)
+            currentFeedJob?.cancel()
+            currentFeedJob = viewModelScope.launch {
+                viewModelScope.launch {
+                    runCatching {
+                        Timber.d("Trying to refresh..")
+                        repository.getBestFeed("")
+                    }.onSuccess {
+                        Timber.d("Refresh success..")
+                        feedMutableFlow.emit(addToFeed(emptyList<Subreddit>()))
+                        val list = it.first
+                        if (list != null)
+                            internalFeedFlow.emit(list)
+                        after = it.second ?: after
+                        isCachedMutableFlow.emit(false)
+                        isRefreshingFeedMutable.emit(false)
+                    }.onFailure {
+                        Timber.d("Refresh fail..")
+                        feedErrorMutable.emit(true)
+                        isRefreshingFeedMutable.emit(false)
                     }
                 }
             }
@@ -163,4 +212,48 @@ class FeedViewModel(
             )
         }
     }
+
+    init {
+        viewModelScope.launch {
+            db.observeSubreddits().take(1).collect {
+                isCachedMutableFlow.emit(true)
+                Timber.d("Filled via DB")
+                val list = parser.fromDataBase(it)
+                after = list.lastOrNull()?.id ?: after
+                internalFeedFlow.emit(list)
+            }
+        }
+        viewModelScope.launch {
+            internalFeedFlow
+//                .flowOn(Dispatchers.IO) //TODO
+                .onEach {
+                    Timber.d("Got ${it.size} items")
+                    val l = parser.toDataBase(it)
+                    Timber.d("Result have ${l.size} items")
+                    db.insertFeedItems(l)
+                }
+//                .map { inList -> //unique check TODO delete
+//                    val list = emptyList<Subreddit>().toMutableList()
+//                    val ids = List<String>(feedFlow.value.size) {
+//                        if (feedFlow.value[it] is Subreddit)
+//                            (feedFlow.value[it] as Subreddit).id
+//                        else
+//                            ""
+//                    }
+//                    inList.forEach {
+//                        if (!ids.contains(it.id))
+//                            list.add(it)
+//                    }
+//                    list
+//                }
+                .map { addToFeed(it) }
+                .collect { feedMutableFlow.emit(it) }
+        }
+        viewModelScope.launch {
+            feedError
+                .onEach { Timber.d("FeedError is $it") }
+                .collect { errorToFeed(it) }
+        }
+    }
+
 }

@@ -8,14 +8,13 @@
     tools:context=".LoginFragment">
 
     <TextView
-        android:id="@+id/feed_network_error"
+        android:id="@+id/feed_error_plate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/lb_grey"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:text="Network error!"
         android:gravity="center"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -23,16 +22,44 @@
         android:visibility="gone"
         />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/feed"
+<!--    <TextView-->
+<!--        android:id="@+id/feed_cached"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@color/lb_grey"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:text="Cached!"-->
+<!--        android:gravity="center"-->
+<!--        android:textSize="20sp"-->
+<!--        android:textStyle="bold"-->
+<!--        android:padding="5dp"-->
+<!--        android:visibility="gone"-->
+<!--        />-->
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/feed_refresh"
         android:layout_width="0dp"
         android:layout_height="0dp"
         tools:itemCount="5"
-        app:layout_constraintTop_toBottomOf="@id/feed_network_error"
+        app:layout_constraintTop_toBottomOf="@id/feed_error_plate"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_feed_multi"/>
+        app:layout_constraintBottom_toBottomOf="parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/feed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            tools:itemCount="5"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:listitem="@layout/item_feed_multi"/>
+
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
