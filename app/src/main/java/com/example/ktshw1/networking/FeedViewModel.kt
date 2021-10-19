@@ -99,12 +99,6 @@ class FeedViewModel(
                     val l = SubredditParser().toDataBase(it)
                     Timber.d("Result have ${l.size} items")
                     d.insertFeedItems(l)
-//                    val s: MutableList<SubredditT> = emptyList<SubredditT>().toMutableList()
-//                    it.forEach { item ->
-//                        if (item is Subreddit)
-//                            s.add(SubredditT(item.id))
-//                    }
-//                    d.insertFeedItems(s)
                 }
                 .map { addToFeed(it) }
                 .collect { feedMutableFlow.emit(it.toMutableList()) }
