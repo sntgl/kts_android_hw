@@ -18,6 +18,7 @@
         <entry key="app/src/main/res/layout/fragment_start.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/item_error.xml" value="0.1962962962962963" />
         <entry key="app/src/main/res/layout/item_feed_image.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_feed_multi.xml" value="0.5" />
         <entry key="app/src/main/res/layout/item_feed_multi.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_feed_text.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_loading.xml" value="0.375" />

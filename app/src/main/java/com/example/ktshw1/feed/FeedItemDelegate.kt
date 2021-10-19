@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat.startActivity
 
 import android.content.Intent
 import android.net.Uri
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 
 
 class FeedItemDelegate(
@@ -103,6 +105,7 @@ class FeedItemDelegate(
                 itemFeedVoteCounter.text = item.score.toString()
             }
             setButtonColors()
+            setVoteLoading()
         }
 
         private fun loadContent(binding: ItemFeedMultiBinding, item: Subreddit) {
@@ -191,11 +194,22 @@ class FeedItemDelegate(
         private fun vote(vote: Boolean) {
             val item = feedItem
             if (item != null) {
+                setVoteLoading(true)
                 voteVM(item, if (item.vote != null) null else vote)
-                setButtonColors()
-                notifyChanged(layoutPosition)
+//                notifyChanged(layoutPosition)
+//                setButtonColors()
             }
         }
+
+        private fun setVoteLoading(loading: Boolean = false) {
+            binding.voteLoading.isVisible = loading
+            //Иначе почему-то уходит в gone и разметка съезжает
+            if (loading)
+                binding.itemFeedVoteCounter.visibility = View.INVISIBLE
+            else
+                binding.itemFeedVoteCounter.visibility = View.VISIBLE
+        }
+
 
         private fun setButtonColors() {
             @ColorRes

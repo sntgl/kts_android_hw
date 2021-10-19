@@ -3,13 +3,14 @@ package com.example.ktshw1.networking
 import com.example.ktshw1.db.SubredditT
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.util.*
 
 @JsonClass(generateAdapter = true)
 data class Subreddit(
     val author: String, //bagged___milk
     val created: Long, //1633625553.0
     @Json(name = "name")
-    val id: String, //t3_q34cz4
+    var id: String, //t3_q34cz4
     val score: Int, //1632
     @Json(name = "subreddit_name_prefixed")
     val subreddit_name: String, //r/Jokes
@@ -23,7 +24,9 @@ data class Subreddit(
     @Json(name = "selftext")
     val text: String,
     @Transient
-    var content_type: Content = Content.NONE
+    var content_type: Content = Content.NONE,
+    @Transient
+    var random_id: UUID = UUID.randomUUID()
 ) {
     enum class Content {
         NONE, URL, IMAGE, TEXT
