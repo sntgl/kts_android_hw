@@ -18,15 +18,6 @@ class StartFragment : Fragment(R.layout.fragment_start) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
-//            datastoreViewModel.onBoardingPassedFlow
-//                .filter { it == true }
-//                .collect {
-//                    findNavController().navigate(R.id.action_startFragment_to_authFragment)
-//                }
-//            combine(
-//                datastoreViewModel.onBoardingPassedFlow,
-//                datastoreViewModel.getApiKeyFlow
-//            )
                 datastoreViewModel.onBoardingPassedFlow.zip(datastoreViewModel.getApiKeyFlow)
                 {onBoardingPassed, apiKey -> onBoardingPassed to apiKey}
                 .onEach { (onBoardingPassed, apiKey) ->
@@ -34,7 +25,7 @@ class StartFragment : Fragment(R.layout.fragment_start) {
                 }
                 .collect { (onBoardingPassed, apiKey) ->
                     if (apiKey != null && apiKey != "") {
-                        UserInfo.authToken = apiKey
+                        UserInfo.authToken = apiKey //TODO походу дохнет(
                         findNavController().navigate(R.id.action_startFragment_to_mainFragment)
                     } else if (onBoardingPassed == true) {
                         findNavController().navigate(R.id.action_startFragment_to_authFragment)

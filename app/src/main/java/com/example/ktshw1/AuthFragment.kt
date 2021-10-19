@@ -13,6 +13,7 @@ import com.example.ktshw1.datastore.DatastoreViewModel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import com.example.ktshw1.utils.toast
+import org.koin.android.ext.android.inject
 
 
 class AuthFragment : Fragment(R.layout.fragment_auth) {
@@ -42,11 +43,12 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             when {
                 tokenExchangeRequest != null && exception == null -> {
                     viewModel.onAuthCodeReceived(tokenExchangeRequest)
-
-                } exception != null -> {
+                }
+                exception != null -> {
                     viewModel.onAuthCodeFailed(exception)
                     viewModel.openLoginPage()
                 }
+                else -> viewModel.openLoginPage()
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)

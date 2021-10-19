@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ConnectionViewModel(
-    private val repository: ConnectionRepositoryInterface
+    private val repository: ConnectionRepository
 ) : ViewModel() {
 
     private val connectionFlowMutable = MutableStateFlow(false)

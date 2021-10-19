@@ -2,12 +2,12 @@ package com.example.ktshw1.datastore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ktshw1.UserInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class DatastoreViewModel(
-    private val repository: DatastoreRepositoryInterface
+    private val repository: DatastoreRepository
 ) : ViewModel() {
 
     val onBoardingPassedFlow: Flow<Boolean?>
@@ -22,9 +22,9 @@ class DatastoreViewModel(
     val getApiKeyFlow: Flow<String?>
         get() = repository.getRedditToken()
 
-    fun onReceivedApiKey(key: String) {
+    fun onReceivedApiKey(key: String?, expires: Long?, refresh: String? = null) {
         viewModelScope.launch {
-            repository.redditTokenReceived(key)
+            repository.redditTokenReceived(key, refresh, expires)
         }
     }
 }

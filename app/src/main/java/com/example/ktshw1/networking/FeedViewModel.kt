@@ -8,9 +8,9 @@ import com.example.ktshw1.model.FeedLastItem
 import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import kotlinx.coroutines.launch
 import studio.kts.android.school.lection4.networking.data.FeedRepositoryInterface
-import timber.log.Timber
 import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
@@ -27,7 +27,7 @@ import kotlin.collections.toMutableMap
 
 
 class FeedViewModel(
-    private val repository: FeedRepositoryInterface,
+    private val repository: FeedRepository,
     private val connectionViewModel: ConnectionViewModel
 ) : ViewModel() {
 
