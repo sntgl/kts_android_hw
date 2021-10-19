@@ -3,6 +3,7 @@ package com.example.ktshw1.networking
 import Networking.okhttpAuthClient
 import android.util.Base64
 import androidx.appcompat.view.StandaloneActionMode
+import com.example.ktshw1.BuildConfig
 import com.example.ktshw1.UserInfo
 import com.example.ktshw1.datastore.DatastoreViewModel
 import com.example.ktshw1.repository.AuthRepository
@@ -32,7 +33,10 @@ class RefreshingInterceptor : Interceptor, KoinComponent {
     override fun intercept(chain: Interceptor.Chain): Response {
         // TODO если еще пол жизни впереди запустить в корутине, если сдох, то ждать
         // в данный момент обновляется раз в минуту для тестирования
-        if ((UserInfo.expires ?: 0) - System.currentTimeMillis() < 60000 * 59) {
+        var tokenTimeLeft = 60000
+        if (BuildConfig.DEBUG)
+            tokenTimeLeft *= 59
+        if ((UserInfo.expires ?: 0) - System.currentTimeMillis() < tokenTimeLeft) {
             val basicAuth = "Basic " + Base64.encodeToString(
                 "${AuthRepository.CLIENT_ID}:".toByteArray(),
                 Base64.NO_WRAP
