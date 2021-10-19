@@ -1,4 +1,4 @@
-package com.example.ktshw1
+package com.example.ktshw1.utils
 
 import com.example.ktshw1.db.SubredditT
 import com.example.ktshw1.db.toSubreddit

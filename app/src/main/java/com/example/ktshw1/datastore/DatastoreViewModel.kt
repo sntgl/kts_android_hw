@@ -2,7 +2,6 @@ package com.example.ktshw1.datastore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ktshw1.UserInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 

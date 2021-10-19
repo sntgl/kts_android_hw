@@ -3,7 +3,7 @@ package com.example.ktshw1.networking
 import Networking.okhttpAuthClient
 import android.util.Base64
 import com.example.ktshw1.BuildConfig
-import com.example.ktshw1.UserInfo
+import com.example.ktshw1.model.UserInfo
 import com.example.ktshw1.datastore.DatastoreViewModel
 import com.example.ktshw1.repository.AuthRepository
 import okhttp3.FormBody

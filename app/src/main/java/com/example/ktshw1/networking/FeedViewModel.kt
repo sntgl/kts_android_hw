@@ -1,7 +1,7 @@
 package com.example.ktshw1.networking
 
 import androidx.lifecycle.*
-import com.example.ktshw1.SubredditParser
+import com.example.ktshw1.utils.SubredditParser
 import com.example.ktshw1.model.FeedLoading
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

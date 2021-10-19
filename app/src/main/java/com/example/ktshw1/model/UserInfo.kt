@@ -1,4 +1,4 @@
-package com.example.ktshw1
+package com.example.ktshw1.model
 
 object UserInfo {
     var authToken: String? = null

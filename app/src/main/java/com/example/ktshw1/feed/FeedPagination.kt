@@ -1,4 +1,4 @@
-package com.example.ktshw1
+package com.example.ktshw1.feed
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

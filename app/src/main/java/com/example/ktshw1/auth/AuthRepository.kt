@@ -1,10 +1,9 @@
 package com.example.ktshw1.repository
 
 import android.net.Uri
-import com.example.ktshw1.UserInfo
+import com.example.ktshw1.model.UserInfo
 import net.openid.appauth.*
 import timber.log.Timber
-import java.util.*
 
 class AuthRepository {
 

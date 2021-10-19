@@ -8,6 +8,7 @@ import com.example.ktshw1.datastore.DatastoreViewModel
 import com.example.ktshw1.networking.FeedRepository
 import com.example.ktshw1.networking.FeedViewModel
 import com.example.ktshw1.repository.AuthRepository
+import com.example.ktshw1.utils.SubredditParser
 import net.openid.appauth.AuthorizationService
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
