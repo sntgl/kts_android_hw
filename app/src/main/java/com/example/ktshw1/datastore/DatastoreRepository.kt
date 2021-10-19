@@ -25,7 +25,7 @@ class DatastoreRepository(
     fun isOnBoardingPassed(): Flow<Boolean?> = dataStore.data.map { it[ONBOARDING_PASSED] }
 
     suspend fun redditTokenReceived(token: String?, refresh: String?, expires: Long?) {
-        Timber.d("Recieved:\nToken - $token expires $expires\nRefresh = $refresh")
+        Timber.d("Received keychain:\nToken - $token expires $expires\nRefresh = $refresh")
         dataStore.edit {
             if (token != null) it[REDDIT_API_KEY] = token
             if (refresh != null) it[REDDIT_REFRESH_KEY] = refresh
@@ -37,7 +37,7 @@ class DatastoreRepository(
         if (it[REDDIT_API_KEY] != null) UserInfo.authToken = it[REDDIT_API_KEY]
         if (it[REDDIT_REFRESH_KEY] != null) UserInfo.refreshToken = it[REDDIT_REFRESH_KEY]
         if (it[REDDIT_EXPIRES_KEY] != null) UserInfo.expires = it[REDDIT_EXPIRES_KEY]
-        Timber.d("Keychain given.\napi = ${it[REDDIT_API_KEY]}\nrefresh = ${it[REDDIT_REFRESH_KEY]}\nexpires = ${it[REDDIT_EXPIRES_KEY]}")
+//        Timber.d("Keychain given.\napi = ${it[REDDIT_API_KEY]}\nrefresh = ${it[REDDIT_REFRESH_KEY]}\nexpires = ${it[REDDIT_EXPIRES_KEY]}")
     }.map { it[REDDIT_API_KEY] }
 
 

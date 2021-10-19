@@ -138,7 +138,7 @@ class FeedItemDelegate(
                                     target: Target<Drawable>?,
                                     isFirstResource: Boolean
                                 ): Boolean {
-                                    Timber.tag("image ${item.url}").d("thumb fail")
+//                                    Timber.tag("image ${item.url}").d("thumb fail")
                                     itemFeedRetryPlaceholder.visibility = View.VISIBLE
                                     itemFeedProgressbar.visibility = View.GONE
                                     itemFeedImage.visibility = View.GONE
@@ -153,7 +153,7 @@ class FeedItemDelegate(
                                     isFirstResource: Boolean
                                 ): Boolean {
                                     itemFeedImage.visibility = View.VISIBLE
-                                    Timber.tag("image ${item.url}").d("thumb success")
+//                                    Timber.tag("image ${item.url}").d("thumb success")
                                     return false
                                 }
                             })
@@ -168,7 +168,7 @@ class FeedItemDelegate(
                             itemFeedRetryPlaceholder.visibility = View.VISIBLE
                             itemFeedProgressbar.visibility = View.INVISIBLE
                             itemFeedImage.visibility = View.GONE
-                            Timber.tag("image ${item.url}").d("fail")
+//                            Timber.tag("image ${item.url}").d("fail")
                             return false
                         }
 
@@ -180,7 +180,7 @@ class FeedItemDelegate(
                             isFirstResource: Boolean
                         ): Boolean {
                             itemFeedProgressbar.visibility = View.GONE
-                            Timber.tag("image ${item.url}").d("succcess")
+//                            Timber.tag("image ${item.url}").d("succcess")
                             return false
                         }
                     })

@@ -15,7 +15,8 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { FeedRepository() }
-    viewModel { FeedViewModel(get()) }
+    single { SubredditParser() }
+    viewModel { FeedViewModel(get(), get(), get()) }
 
     single { ConnectionRepository(androidContext()) }
     viewModel { ConnectionViewModel(get()) }

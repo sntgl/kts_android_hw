@@ -53,7 +53,7 @@ class RefreshingInterceptor : Interceptor, KoinComponent {
                 .build()
             val call = okhttpAuthClient.newCall(request).execute()
             val json = call.body?.string()
-            Timber.d("Refreshing called! Status code = ${call.code}, body =\n${json}")
+//            Timber.d("Refreshing called! Status code = ${call.code}, body =\n${json}")
 
             val jsonObject = JSONTokener(json).nextValue() as JSONObject
 
