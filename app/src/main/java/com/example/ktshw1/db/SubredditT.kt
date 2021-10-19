@@ -33,7 +33,9 @@ data class SubredditT(
     @ColumnInfo(name = SubredditContract.Columns.NUM_COMMENTS)
     val num_comments: Int, //
     @ColumnInfo(name = SubredditContract.Columns.PERMALINK)
-    val permalink: String
+    val permalink: String, //
+    @ColumnInfo(name = SubredditContract.Columns.TEXT)
+    val text: String
 )
 
 fun SubredditT.toSubreddit() = Subreddit(
@@ -48,4 +50,5 @@ fun SubredditT.toSubreddit() = Subreddit(
         thumbnail = thumbnail,
         num_comments = num_comments,
         permalink = permalink,
+        text = text
     ).setContentType()

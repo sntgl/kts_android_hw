@@ -20,11 +20,13 @@ data class Subreddit(
     val thumbnail: String, //
     val num_comments: Int, //
     val permalink: String,
+    @Json(name = "selftext")
+    val text: String,
     @Transient
     var content_type: Content = Content.NONE
 ) {
     enum class Content {
-        NONE, URL, IMAGE
+        NONE, URL, IMAGE, TEXT
     }
 }
 
@@ -38,8 +40,10 @@ fun Subreddit.setContentType(): Subreddit {
         item.content_type = Subreddit.Content.IMAGE
     else if (!(item.url.contains("/comments/") &&
                 item.url.contains("reddit.com")) &&
-        item.url != "self")
+                item.url != "self")
         item.content_type = Subreddit.Content.URL
+    else if (item.text != "")
+        Subreddit.Content.TEXT
     else item.content_type = Subreddit.Content.NONE
     return item
 }
@@ -55,5 +59,6 @@ fun Subreddit.toSubredditT() = SubredditT(
         vote = vote,
         thumbnail = thumbnail,
         num_comments = num_comments,
-        permalink = permalink
+        permalink = permalink,
+        text = text
     )
