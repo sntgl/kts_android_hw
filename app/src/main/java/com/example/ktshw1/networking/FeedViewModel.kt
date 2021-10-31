@@ -85,14 +85,14 @@ class FeedViewModel(
     }
 
     private fun addToFeed(it: List<*>): List<*> {
-        var dropLast = if (feedFlow.value.last() is FeedLoading)
-            feedFlow.value.dropLast(1) else emptyList()
+        var dropLast = if (feedMutableFlow.value.last() is FeedLoading)
+            feedMutableFlow.value.dropLast(1) else emptyList()
         dropLast = dropLast.plus(it.plus(FeedLoading()))
         return dropLast
     }
 
     fun getMoreFeed() {
-        if (isLoadingFeed.value) return
+        if (isLoadingFeedMutable.value) return
         viewModelScope.launch {
             isLoadingFeedMutable.emit(true)
             feedErrorMutable.emit(false)
