@@ -14,8 +14,6 @@ class FeedViewModel(
 ) : ViewModel() {
 
     private val isLoadingFeedMutable = MutableStateFlow(false)
-    private val isLoadingFeed: StateFlow<Boolean>
-        get() = isLoadingFeedMutable
 
     private val voteErrorMutable = MutableStateFlow(false)
     val voteError: StateFlow<Boolean>
@@ -86,7 +84,7 @@ class FeedViewModel(
 
     private fun addToFeed(it: List<*>): List<*> {
         var dropLast = if (feedMutableFlow.value.last() is FeedLoading)
-            feedMutableFlow.value.dropLast(1) else emptyList()
+            feedMutableFlow.value.dropLast(1) else feedMutableFlow.value
         dropLast = dropLast.plus(it.plus(FeedLoading()))
         return dropLast
     }
