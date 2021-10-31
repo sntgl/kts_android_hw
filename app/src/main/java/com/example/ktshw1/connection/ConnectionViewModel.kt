@@ -42,6 +42,6 @@ class ConnectionViewModel(
     }
 
     companion object {
-        const val DELAY: Long = 100
+        const val DELAY: Long = 1000
     }
 }
