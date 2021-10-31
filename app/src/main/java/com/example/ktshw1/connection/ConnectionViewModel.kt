@@ -12,9 +12,6 @@ import timber.log.Timber
 class ConnectionViewModel(
     private val repository: ConnectionRepositoryInterface
 ) : ViewModel() {
-    private var oldConnectionState: Boolean? = null
-
-
 
     private val connectionFlowMutable = MutableStateFlow(false)
     val connectionFlow: StateFlow<Boolean>
@@ -27,11 +24,7 @@ class ConnectionViewModel(
             }
     }.onStart {
         Timber.d("Connection flow started, delay = $DELAY")
-    }.filter {
-        oldConnectionState != it
-    }.onEach {
-        oldConnectionState = it
-    }
+    }.distinctUntilChanged()
 
     init {
         viewModelScope.launch {
