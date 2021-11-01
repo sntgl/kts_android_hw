@@ -1,33 +1,18 @@
 package com.example.ktshw1.networking
 
+import Database
 import androidx.lifecycle.*
-import com.example.ktshw1.connection.ConnectionRepository
-import com.example.ktshw1.db.SubredditT
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.model.FeedError
 import com.example.ktshw1.model.FeedLastItem
-import com.example.ktshw1.utils.SubredditParser
 import com.example.ktshw1.model.FeedLoading
+import com.example.ktshw1.utils.SubredditParser
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 import kotlinx.coroutines.launch
-import kotlin.collections.List
-import kotlin.collections.MutableList
-import kotlin.collections.MutableMap
-import kotlin.collections.dropLast
-import kotlin.collections.emptyList
-import kotlin.collections.emptyMap
-import kotlin.collections.indexOf
-import kotlin.collections.last
-import kotlin.collections.mutableListOf
-import kotlin.collections.plus
-import kotlin.collections.set
-import kotlin.collections.toMutableList
-import kotlin.collections.toMutableMap
+import timber.log.Timber
 import java.util.*
+import kotlin.collections.set
 
 
 class FeedViewModel(
@@ -108,21 +93,6 @@ class FeedViewModel(
         viewModelScope.launch { voteErrorMutable.emit(false) }
     }
 
-
-
-
-    private fun addToFeed(it: List<*>): List<*> {
-        val value = feedMutableFlow.value
-        Timber.i("Previous list size is ${value.size}")
-        var dropLast =
-            if (value.last() is FeedLastItem) {
-                    value.dropLast(1)
-            } else { value }
-        dropLast = dropLast.plus(it.plus(FeedLoading()))
-        Timber.i("Current list size is ${dropLast.size}")
-        return dropLast
-    }
-
     fun getMoreFeed() {
         Timber.d("Getting more feed...")
         if (isLoadingFeedMutable.value) return
@@ -196,7 +166,21 @@ class FeedViewModel(
         }
     }
 
-    fun loadFromCache() {
+    private fun addToFeed(it: List<*>): List<*> {
+        val value = feedMutableFlow.value
+        Timber.i("Previous list size is ${value.size}")
+        var dropLast =
+            if (value.last() is FeedLastItem) {
+                value.dropLast(1)
+            } else {
+                value
+            }
+        dropLast = dropLast.plus(it.plus(FeedLoading()))
+        Timber.i("Current list size is ${dropLast.size}")
+        return dropLast
+    }
+
+    private fun loadFromCache() {
         viewModelScope.launch {
             db.observeSubreddits().take(1).collect {
                 isCachedMutableFlow.emit(true)
@@ -235,24 +219,13 @@ class FeedViewModel(
                 .collect { feedMutableFlow.emit(it.toMutableList()) }
         }
 
-//        viewModelScope.launch {
-//            internalFeedFlow
-////                .flowOn(Dispatchers.IO) //TODO
-//                .onEach {
-//                    Timber.d("Got ${it.size} items")
-//                    val l = SubredditParser().toDataBase(it)
-//                    Timber.d("Result have ${l.size} items")
-//                    db.insertFeedItems(l)
-//                }
-//                .map { addToFeed(it) }
-//                .collect { feedMutableFlow.emit(it.toMutableList()) }
-//        }
         viewModelScope.launch {
             feedErrorMutable
                 .onEach { Timber.d("FeedError is $it") }
                 .distinctUntilChanged()
                 .collect { errorToFeed(it) }
         }
+
         viewModelScope.launch {
             connectionViewModel.connectionFlow
                 .filter { it && feedErrorMutable.value }
