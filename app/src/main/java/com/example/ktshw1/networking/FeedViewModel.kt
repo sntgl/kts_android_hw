@@ -1,9 +1,7 @@
 package com.example.ktshw1.networking
 
 import androidx.lifecycle.*
-import com.example.ktshw1.SubredditParser
 import com.example.ktshw1.connection.ConnectionRepository
-import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.db.SubredditT
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +14,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import kotlinx.coroutines.launch
-import studio.kts.android.school.lection4.networking.data.FeedRepositoryInterface
 import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
@@ -57,9 +54,11 @@ class FeedViewModel(
 
     private var after: String = ""
 
-    private val isCachedMutableFlow = MutableStateFlow<Boolean>(false)
+    private val isCachedMutableFlow = MutableStateFlow(false)
     val isCachedFlow: StateFlow<Boolean>
         get() = isCachedMutableFlow
+
+    private val initByNetwork = MutableStateFlow(false)
 
     private val feedMutableFlow = MutableStateFlow<MutableList<*>>(mutableListOf(FeedLoading()))
     val feedFlow: StateFlow<MutableList<*>>
@@ -110,47 +109,22 @@ class FeedViewModel(
     }
 
 
-    init {
-        viewModelScope.launch {
-            internalFeedFlow
-//                .flowOn(Dispatchers.IO) //TODO
-                .onEach {
-                    Timber.d("Got ${it.size} items")
-                    val l = SubredditParser().toDataBase(it)
-                    Timber.d("Result have ${l.size} items")
-                    d.insertFeedItems(l)
-                }
-                .map { addToFeed(it) }
-                .collect { feedMutableFlow.emit(it.toMutableList()) }
-        }
-        viewModelScope.launch {
-            feedErrorMutable
-                .onEach { Timber.d("FeedError is $it") }
-                .distinctUntilChanged()
-                .collect { errorToFeed(it) }
-        }
-        viewModelScope.launch {
-            connectionViewModel.connectionFlow
-                .filter { it && feedErrorMutable.value }
-                .collect {
-                    Timber.d("Connection returned, retrying...")
-                    getMoreFeed()
-                }
-        }
-    }
 
 
     private fun addToFeed(it: List<*>): List<*> {
+        val value = feedMutableFlow.value
+        Timber.i("Previous list size is ${value.size}")
         var dropLast =
-            if (!isRefreshingFeed.value && feedFlow.value.last() is FeedLoading) {
-                    feedFlow.value.dropLast(1)
-            } else { feedMutableFlow.value }
+            if (value.last() is FeedLastItem) {
+                    value.dropLast(1)
+            } else { value }
         dropLast = dropLast.plus(it.plus(FeedLoading()))
         Timber.i("Current list size is ${dropLast.size}")
         return dropLast
     }
 
     fun getMoreFeed() {
+        Timber.d("Getting more feed...")
         if (isLoadingFeedMutable.value) return
         viewModelScope.launch {
             isLoadingFeedMutable.emit(true)
@@ -176,7 +150,8 @@ class FeedViewModel(
     }
 
     fun refreshFeed() {
-        if (isRefreshingFeed.value) return
+        Timber.d("Refreshing feed...")
+        if (isRefreshingFeedMutable.value) return
         viewModelScope.launch {
             isRefreshingFeedMutable.emit(true)
             feedErrorMutable.emit(false)
@@ -186,16 +161,20 @@ class FeedViewModel(
                     runCatching {
                         repository.getBestFeed("")
                     }.onSuccess {
-                        feedMutableFlow.emit(addToFeed(emptyList<Subreddit>()))
                         val list = it.first
-                        if (list != null)
+                        if (list != null) {
+                            feedMutableFlow.emit(mutableListOf(FeedLoading()))
                             internalFeedFlow.emit(list)
-                        after = it.second ?: after
+                            after = it.second ?: after
+                        }
                         isCachedMutableFlow.emit(false)
                         isRefreshingFeedMutable.emit(false)
+                        initByNetwork.emit(true)
                     }.onFailure {
                         feedErrorMutable.emit(true)
                         isRefreshingFeedMutable.emit(false)
+                        if (!initByNetwork.value)
+                            loadFromCache()
                     }
                 }
             }
@@ -206,7 +185,7 @@ class FeedViewModel(
     private fun errorToFeed(isError: Boolean) {
         viewModelScope.launch {
             var feedLocal = feedMutableFlow.value
-            if (feedLocal.last() is FeedLastItem) {
+            if (feedLocal.lastOrNull() is FeedLastItem) {
                 if (feedLocal.last() is FeedError && isError) return@launch
                 if (feedLocal.last() is FeedLoading && !isError) return@launch
                 feedLocal = feedLocal.dropLast(1).toMutableList()
@@ -217,7 +196,7 @@ class FeedViewModel(
         }
     }
 
-    init {
+    fun loadFromCache() {
         viewModelScope.launch {
             db.observeSubreddits().take(1).collect {
                 isCachedMutableFlow.emit(true)
@@ -227,6 +206,9 @@ class FeedViewModel(
                 internalFeedFlow.emit(list)
             }
         }
+    }
+
+    init {
         viewModelScope.launch {
             internalFeedFlow
                 .onEach {
@@ -235,7 +217,7 @@ class FeedViewModel(
                     Timber.d("Result have ${l.size} items")
                     db.insertFeedItems(l)
                 }
-                .map { inList -> //unique check может убрать
+                .map { inList -> //unique check, может убрать
                     val list = emptyList<Subreddit>().toMutableList()
                     val ids = List(feedFlow.value.size) {
                         if (feedFlow.value[it] is Subreddit)
@@ -250,12 +232,34 @@ class FeedViewModel(
                     list
                 }
                 .map { addToFeed(it) }
-                .collect { feedMutableFlow.emit(it) }
+                .collect { feedMutableFlow.emit(it.toMutableList()) }
+        }
+
+//        viewModelScope.launch {
+//            internalFeedFlow
+////                .flowOn(Dispatchers.IO) //TODO
+//                .onEach {
+//                    Timber.d("Got ${it.size} items")
+//                    val l = SubredditParser().toDataBase(it)
+//                    Timber.d("Result have ${l.size} items")
+//                    db.insertFeedItems(l)
+//                }
+//                .map { addToFeed(it) }
+//                .collect { feedMutableFlow.emit(it.toMutableList()) }
+//        }
+        viewModelScope.launch {
+            feedErrorMutable
+                .onEach { Timber.d("FeedError is $it") }
+                .distinctUntilChanged()
+                .collect { errorToFeed(it) }
         }
         viewModelScope.launch {
-            feedError
-                .onEach { Timber.d("FeedError is $it") }
-                .collect { errorToFeed(it) }
+            connectionViewModel.connectionFlow
+                .filter { it && feedErrorMutable.value }
+                .collect {
+                    Timber.d("Connection returned, retrying...")
+                    getMoreFeed()
+                }
         }
     }
 
