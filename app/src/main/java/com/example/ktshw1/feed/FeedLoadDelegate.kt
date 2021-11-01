@@ -18,11 +18,8 @@ import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
 
-//import kotlinx.android.extensions.LayoutContainer
 
 class FeedLoadDelegate (
-    private val retry: () -> Any,
-    private val notifyChanged: (position: Int) -> Any,
     ) : AbsListItemAdapterDelegate<Any, Any, FeedLoadDelegate.FeedLoadDelegateVH>() {
 
     override fun isForViewType(item: Any, items: MutableList<Any>, position: Int): Boolean {
@@ -32,7 +29,7 @@ class FeedLoadDelegate (
     override fun onCreateViewHolder(parent: ViewGroup): FeedLoadDelegateVH {
         val binding =
             ItemLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FeedLoadDelegateVH(binding, retry, notifyChanged)
+        return FeedLoadDelegateVH(binding)
     }
 
     override fun onBindViewHolder(item: Any, holder: FeedLoadDelegateVH, payloads: MutableList<Any>) {
@@ -41,34 +38,11 @@ class FeedLoadDelegate (
 
     class FeedLoadDelegateVH(
         private val binding: ItemLoadingBinding,
-        private val retry: () -> Any,
-        private val notifyChanged: (position: Int) -> Any,
         ) : RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            with(binding) {
-                root.setOnClickListener {
-                    retry()
-                    notifyChanged(layoutPosition)
-                }
-            }
-        }
 
         fun bind(item: FeedLoading) {
-            with (binding) {
-                Timber.d("Error state is ${item.isError}")
-                if (item.isError) {
-                    errorText.text = errorText.context.getString(R.string.feed_error)
-                    errorImage.isVisible = true
-                    errorText.isVisible = true
-                    progressBar.isGone = true
-                } else {
-                    errorImage.isGone = true
-                    errorText.isGone = true
-                    progressBar.isVisible = true
-                }
-            }
-
+            Timber.d("Loading item is binded!")
         }
     }
 }

@@ -12,7 +12,7 @@ import studio.kts.android.school.lection4.networking.data.FeedRepositoryInterfac
 
 val appModule = module {
     single<FeedRepositoryInterface> { FeedRepository() }
-    viewModel { FeedViewModel(get()) }
+    viewModel { FeedViewModel(get(), get()) }
     single<ConnectionRepositoryInterface> { ConnectionRepository(androidContext()) }
     viewModel { ConnectionViewModel(get()) }
 }

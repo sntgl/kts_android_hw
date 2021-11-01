@@ -2,6 +2,7 @@ package com.example.ktshw1.feed
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
+import com.example.ktshw1.model.FeedError
 import com.example.ktshw1.model.FeedLoading
 import com.example.ktshw1.networking.FeedViewModel
 import com.example.ktshw1.networking.Subreddit
@@ -18,7 +19,8 @@ class ListDelegatesAdapter(
             ::notifyItemChanged,
             feedViewModel::vote,
             share))
-        delegatesManager.addDelegate(FeedLoadDelegate(feedViewModel::retry, ::notifyItemChanged))
+        delegatesManager.addDelegate(FeedLoadDelegate())
+        delegatesManager.addDelegate(FeedErrorDelegate(feedViewModel::retry))
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Any>() {
@@ -26,6 +28,7 @@ class ListDelegatesAdapter(
             return oldItem.javaClass == newItem.javaClass && when (newItem) {
                 is Subreddit -> newItem.id == (oldItem as Subreddit).id
                 is FeedLoading -> newItem.id == (oldItem as FeedLoading).id
+                is FeedError -> newItem.id == (oldItem as FeedError).id
                 else -> true
             }
         }

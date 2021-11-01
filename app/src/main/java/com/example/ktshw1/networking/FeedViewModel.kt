@@ -1,16 +1,34 @@
 package com.example.ktshw1.networking
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.ktshw1.connection.ConnectionViewModel
+import com.example.ktshw1.model.FeedError
+import com.example.ktshw1.model.FeedLastItem
 import com.example.ktshw1.model.FeedLoading
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
-import studio.kts.android.school.lection4.networking.data.FeedRepository
+import kotlinx.coroutines.launch
 import studio.kts.android.school.lection4.networking.data.FeedRepositoryInterface
 import timber.log.Timber
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
+import kotlin.collections.dropLast
+import kotlin.collections.emptyList
+import kotlin.collections.emptyMap
+import kotlin.collections.indexOf
+import kotlin.collections.last
+import kotlin.collections.mutableListOf
+import kotlin.collections.plus
+import kotlin.collections.set
+import kotlin.collections.toMutableList
+import kotlin.collections.toMutableMap
 
 
 class FeedViewModel(
-    private val repository: FeedRepositoryInterface
+    private val repository: FeedRepositoryInterface,
+    private val connectionViewModel: ConnectionViewModel
 ) : ViewModel() {
 
     private val isLoadingFeedMutable = MutableStateFlow(false)
@@ -20,16 +38,14 @@ class FeedViewModel(
         get() = voteErrorMutable
 
     private var feedErrorMutable = MutableStateFlow(false)
-    private val feedError: StateFlow<Boolean>
-        get() = feedErrorMutable
 
     private var currentFeedJob: Job? = null
     private var currentVoteJobs: MutableMap<String, Job> = emptyMap<String, Job>().toMutableMap()
 
     private var after: String = ""
 
-    private val feedMutableFlow = MutableStateFlow<List<*>>(listOf(FeedLoading()))
-    val feedFlow: StateFlow<List<*>>
+    private val feedMutableFlow = MutableStateFlow<MutableList<*>>(mutableListOf(FeedLoading()))
+    val feedFlow: StateFlow<MutableList<*>>
         get() = feedMutableFlow
 
     private val internalFeedFlow = MutableStateFlow<List<*>>(emptyList<Subreddit>())
@@ -73,17 +89,26 @@ class FeedViewModel(
         viewModelScope.launch {
             internalFeedFlow
                 .map { addToFeed(it) }
-                .collect { feedMutableFlow.emit(it) }
+                .collect { feedMutableFlow.emit(it.toMutableList()) }
         }
         viewModelScope.launch {
-            feedError
+            feedErrorMutable
                 .onEach { Timber.d("FeedError is $it") }
+                .distinctUntilChanged()
                 .collect { errorToFeed(it) }
+        }
+        viewModelScope.launch {
+            connectionViewModel.connectionFlow
+                .filter { it && feedErrorMutable.value }
+                .collect {
+                    Timber.d("Connection returned, retrying...")
+                    getMoreFeed()
+                }
         }
     }
 
     private fun addToFeed(it: List<*>): List<*> {
-        var dropLast = if (feedMutableFlow.value.last() is FeedLoading)
+        var dropLast = if (feedMutableFlow.value.last() is FeedLastItem)
             feedMutableFlow.value.dropLast(1) else feedMutableFlow.value
         dropLast = dropLast.plus(it.plus(FeedLoading()))
         return dropLast
@@ -113,13 +138,17 @@ class FeedViewModel(
 
     }
 
-    private fun errorToFeed(error: Boolean = true) {
+    private fun errorToFeed(isError: Boolean) {
         viewModelScope.launch {
-            var fLD = feedFlow.value.toMutableList()
-            if (fLD.last() is FeedLoading) {
-                fLD = fLD.dropLast(1).toMutableList()
+            var feedLocal = feedMutableFlow.value
+            if (feedLocal.last() is FeedLastItem) {
+                if (feedLocal.last() is FeedError && isError) return@launch
+                if (feedLocal.last() is FeedLoading && !isError) return@launch
+                feedLocal = feedLocal.dropLast(1).toMutableList()
             }
-            feedMutableFlow.emit(fLD.plus(FeedLoading(isError = error)))
+            feedMutableFlow.emit(
+                feedLocal.plus(if (isError) FeedError() else FeedLoading()).toMutableList()
+            )
         }
     }
 }
