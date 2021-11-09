@@ -5,6 +5,7 @@ import com.example.ktshw1.connection.ConnectionRepository
 import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.datastore.DatastoreRepository
 import com.example.ktshw1.datastore.DatastoreViewModel
+import com.example.ktshw1.feed.ListDelegatesAdapter
 import com.example.ktshw1.networking.FeedRepository
 import com.example.ktshw1.networking.FeedViewModel
 import com.example.ktshw1.repository.AuthRepository

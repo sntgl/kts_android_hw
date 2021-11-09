@@ -2,6 +2,8 @@ package com.example.ktshw1
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
+import android.speech.RecognizerIntent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment(R.layout.fragment_feed) {
@@ -72,19 +75,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 binding.feedRefresh.isRefreshing = it
             }
         }
+
+
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 
     private fun showErrorPlate(show: Boolean, text: String = "") {
         binding.feedErrorPlate.isGone = !show
@@ -93,6 +87,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     }
 
     private fun createRecycler() {
+//        feedAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.ALLOW
 
         feedAdapter = ListDelegatesAdapter(feedViewModel) { url ->
             val intent = Intent(Intent.ACTION_SEND).apply {
@@ -137,7 +132,19 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 //        }
     }
 
+    private var managerState: Parcelable? = null
+
     private fun loadMoreItems() {
         feedViewModel.getMoreFeed()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        managerState = binding.feed.layoutManager?.onSaveInstanceState()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.feed.layoutManager?.onRestoreInstanceState(managerState)
     }
 }
