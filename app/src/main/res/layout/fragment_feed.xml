@@ -41,24 +41,28 @@
         android:id="@+id/feed_refresh"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        tools:itemCount="5"
-        app:layout_constraintTop_toBottomOf="@id/feed_error_plate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/feed_error_plate"
+        app:layout_constraintVertical_bias="0.0"
+        tools:itemCount="5">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/feed"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            tools:itemCount="5"
-            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:listitem="@layout/item_feed_multi"/>
+            app:layout_constraintTop_toBottomOf="parent"
+            tools:itemCount="5"
+            tools:listitem="@layout/item_feed_multi" />
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

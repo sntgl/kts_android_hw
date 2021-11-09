@@ -266,5 +266,8 @@ class FeedViewModel(
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+    }
 
 }

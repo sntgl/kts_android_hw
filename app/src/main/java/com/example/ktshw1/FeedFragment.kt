@@ -3,11 +3,13 @@ package com.example.ktshw1
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -72,6 +74,18 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
     private fun showErrorPlate(show: Boolean, text: String = "") {
         binding.feedErrorPlate.isGone = !show
         binding.feedErrorPlate.isVisible = show
@@ -107,6 +121,20 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             Timber.i("Hey i want to refresh!!")
             feedViewModel.refreshFeed()
         }
+//        binding.bottomNavigation.selectedItemId = R.id.bottomNavigationFeed
+//        binding.bottomNavigation.setOnItemSelectedListener { item ->
+//            when (item.itemId) {
+//                R.id.bottomNavigationFeed -> {
+//                    Timber.d("Feed")
+//                }
+//                R.id.bottomNavigationProfile -> {
+//                    Timber.d("Profile")
+//                    findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
+//                }
+//                else -> return@setOnItemSelectedListener false
+//            }
+//            return@setOnItemSelectedListener true
+//        }
     }
 
     private fun loadMoreItems() {

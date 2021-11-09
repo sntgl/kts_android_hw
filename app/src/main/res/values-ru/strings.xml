@@ -24,4 +24,5 @@
     <string name="cached">Сабреддиты из кэша</string>
     <string name="network_fail">Сеть недоступна</string>
     <string name="get_more_text">"…показать весь текст "</string>
+    <string name="profile">Профиль</string>
 </resources>
