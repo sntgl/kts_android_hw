@@ -26,4 +26,10 @@ class DatastoreViewModel(
             repository.redditTokenReceived(key, refresh, expires)
         }
     }
+
+    fun clear() {
+        viewModelScope.launch {
+            repository.clear()
+        }
+    }
 }

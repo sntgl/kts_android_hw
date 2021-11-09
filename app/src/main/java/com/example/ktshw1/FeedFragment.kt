@@ -116,20 +116,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             Timber.i("Hey i want to refresh!!")
             feedViewModel.refreshFeed()
         }
-//        binding.bottomNavigation.selectedItemId = R.id.bottomNavigationFeed
-//        binding.bottomNavigation.setOnItemSelectedListener { item ->
-//            when (item.itemId) {
-//                R.id.bottomNavigationFeed -> {
-//                    Timber.d("Feed")
-//                }
-//                R.id.bottomNavigationProfile -> {
-//                    Timber.d("Profile")
-//                    findNavController().navigate(R.id.action_mainFragment_to_profileFragment)
-//                }
-//                else -> return@setOnItemSelectedListener false
-//            }
-//            return@setOnItemSelectedListener true
-//        }
     }
 
     private var managerState: Parcelable? = null

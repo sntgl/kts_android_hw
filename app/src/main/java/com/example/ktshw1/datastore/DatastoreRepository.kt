@@ -40,6 +40,12 @@ class DatastoreRepository(
 //        Timber.d("Keychain given.\napi = ${it[REDDIT_API_KEY]}\nrefresh = ${it[REDDIT_REFRESH_KEY]}\nexpires = ${it[REDDIT_EXPIRES_KEY]}")
     }.map { it[REDDIT_API_KEY] }
 
+    suspend fun clear() {
+        dataStore.edit {
+            it.clear()
+        }
+    }
+
 
     companion object {
         private const val DATASTORE_NAME = "datastore"

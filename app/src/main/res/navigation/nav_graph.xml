@@ -35,7 +35,7 @@
         <action
             android:id="@+id/action_onBoardingFragment_to_loginFragment"
             app:destination="@id/authFragment"
-            app:popUpTo="@id/onBoardingFragment"
+            app:popUpTo="@id/authFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
@@ -43,7 +43,14 @@
         android:name="com.example.ktshw1.NavigationFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_navigation"
-        />
+        >
+        <action
+            android:id="@+id/action_mainFragment_to_authFragment"
+            app:destination="@id/authFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/authFragment"
+            />
+    </fragment>
     <fragment
         android:id="@+id/authFragment"
         android:name="com.example.ktshw1.AuthFragment"
@@ -52,7 +59,7 @@
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
             app:destination="@id/mainFragment"
-            app:popUpTo="@id/authFragment"
+            app:popUpTo="@id/mainFragment"
             app:popUpToInclusive="true" />
     </fragment>
 

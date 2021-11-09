@@ -27,6 +27,6 @@ val appModule = module {
     viewModel { DatastoreViewModel(get()) }
 
     single { AuthRepository() }
-    single { AuthorizationService(androidContext()) }
+    factory { AuthorizationService(androidContext()) }
     viewModel { AuthViewModel(get(), get()) }
 }
