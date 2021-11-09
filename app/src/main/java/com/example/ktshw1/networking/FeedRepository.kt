@@ -1,4 +1,8 @@
 package com.example.ktshw1.networking
+import android.net.Network
+import com.example.ktshw1.model.Subreddit
+import com.example.ktshw1.model.prepare
+
 
 class FeedRepository {
     private fun unwrap(wrapped: ServerListingWrapper<ServerResponseWrapper<Subreddit>>): List<Subreddit> {
@@ -30,5 +34,20 @@ class FeedRepository {
         }
         Networking.redditApi.vote(id, dir)
         return getSubreddit(id)
+    }
+
+    suspend fun save(id: String, save: Boolean): Subreddit? {
+//        val dir = when (newVote) {
+//            null -> 0
+//            true -> 1
+//            false -> -1
+//        }
+        if (save)
+            Networking.redditApi.save(id)
+        else
+            Networking.redditApi.unsave(id)
+        return getSubreddit(id)
+//        Networking.redditApi.vote(id, dir)
+//        return getSubreddit(id)
     }
 }

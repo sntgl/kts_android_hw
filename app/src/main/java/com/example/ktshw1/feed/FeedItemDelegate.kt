@@ -15,7 +15,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.ktshw1.R
 import com.example.ktshw1.databinding.ItemFeedMultiBinding
-import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import timber.log.Timber
 import androidx.core.content.ContextCompat.startActivity
@@ -25,13 +24,16 @@ import android.net.Uri
 import android.text.Spanned
 import android.widget.TextView
 import androidx.core.text.toSpannable
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.example.ktshw1.model.Subreddit
 import com.example.ktshw1.utils.ClickToFullTextSpan
 
 
 class FeedItemDelegate(
     private val notifyChanged: (position: Int) -> Any,
     private val voteVM: (subreddit: Subreddit, newVote: Boolean?) -> Any,
+    private val saveVM: (subreddit: Subreddit) -> Any,
     private val share: (url: String) -> Any,
 ) : AbsListItemAdapterDelegate<Any, Any, FeedItemDelegate.FeedItemDelegateVH>() {
 
@@ -43,7 +45,7 @@ class FeedItemDelegate(
     override fun onCreateViewHolder(parent: ViewGroup): FeedItemDelegateVH {
         val binding =
             ItemFeedMultiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FeedItemDelegateVH(binding, notifyChanged, voteVM, share)
+        return FeedItemDelegateVH(binding, notifyChanged, voteVM, saveVM, share)
     }
 
     override fun onBindViewHolder(
@@ -58,6 +60,7 @@ class FeedItemDelegate(
         private val binding: ItemFeedMultiBinding,
         private val notifyChanged: (position: Int) -> Any,
         private val voteVM: (subreddit: Subreddit, newVote: Boolean?) -> Any,
+        private val saveVM: (subreddit: Subreddit) -> Any,
         private val share: (url: String) -> Any,
         ) : RecyclerView.ViewHolder(binding.root) {
         private var feedItem: Subreddit? = null
@@ -109,6 +112,7 @@ class FeedItemDelegate(
             }
             setButtonColors()
             setVoteLoading()
+            setStar()
         }
 
         private fun loadContent(binding: ItemFeedMultiBinding, item: Subreddit) {
@@ -252,6 +256,21 @@ class FeedItemDelegate(
                 ContextCompat.getColor(binding.root.context, upButtonColor),
                 PorterDuff.Mode.SRC_IN
             )
+        }
+
+        private fun setStar() {
+            if (feedItem?.saved == true) {
+                binding.itemFeedStar.setImageResource(R.drawable.ic_baseline_star_24)
+            } else {
+                binding.itemFeedStar.setImageResource(R.drawable.ic_baseline_star_border_24)
+            }
+            binding.itemFeedStar.isVisible = true
+            binding.starLoading.isVisible = false
+            binding.itemFeedStar.setOnClickListener {
+                feedItem?.let { saveVM(it) }
+                binding.itemFeedStar.visibility = View.INVISIBLE
+                binding.starLoading.isVisible = true
+            }
         }
     }
 }

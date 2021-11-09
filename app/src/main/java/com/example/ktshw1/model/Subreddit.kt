@@ -1,4 +1,4 @@
-package com.example.ktshw1.networking
+package com.example.ktshw1.model
 
 import androidx.core.text.HtmlCompat
 import com.example.ktshw1.db.SubredditT
@@ -24,6 +24,7 @@ data class Subreddit(
     val thumbnail: String, //
     val num_comments: Int, //
     val permalink: String,
+    val saved: Boolean,
     @Json(name = "selftext")
     var text: String,
     @Transient
@@ -86,5 +87,6 @@ fun Subreddit.toSubredditT() = SubredditT(
         thumbnail = thumbnail,
         num_comments = num_comments,
         permalink = permalink,
-        text = text
+        text = text,
+        saved = saved
     )

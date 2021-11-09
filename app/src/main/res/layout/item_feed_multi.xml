@@ -169,6 +169,7 @@
         android:id="@+id/item_feed_up_button"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="10dp"
         android:src="@drawable/ic_baseline_arrow_upward_24"
         app:layout_constraintBottom_toBottomOf="@id/item_feed_vote_counter"
         app:layout_constraintDimensionRatio="W,1:1"
@@ -216,11 +217,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:src="@drawable/ic_baseline_chat_bubble_outline_24"
-        app:layout_constraintBottom_toBottomOf="@id/item_feed_vote_counter"
+        android:layout_marginHorizontal="10dp"
+        android:padding="1dp"
         app:layout_constraintDimensionRatio="W,1:1"
-        app:layout_constraintLeft_toRightOf="@id/item_feed_down_button"
-        app:layout_constraintRight_toLeftOf="@id/item_feed_share_button"
-        app:layout_constraintTop_toBottomOf="@id/item_feed_image_container" />
+        app:layout_constraintBottom_toBottomOf="@id/item_feed_vote_counter"
+        app:layout_constraintRight_toLeftOf="@id/item_feed_star"
+        app:layout_constraintTop_toBottomOf="@id/item_feed_image_container"
+        />
 
     <TextView
         android:id="@+id/item_feed_comment_number"
@@ -230,8 +233,9 @@
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:textSize="18sp"
+        android:layout_marginHorizontal="10dp"
         app:layout_constraintBottom_toBottomOf="@id/item_feed_vote_counter"
-        app:layout_constraintLeft_toRightOf="@id/item_feed_comment_button"
+        app:layout_constraintRight_toLeftOf="@id/item_feed_comment_button"
         app:layout_constraintTop_toBottomOf="@id/item_feed_image_container"
         tools:text="1234" />
 
@@ -239,10 +243,37 @@
         android:id="@+id/item_feed_share_button"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
         android:src="@drawable/ic_baseline_share_24"
+        android:padding="1dp"
         app:layout_constraintBottom_toBottomOf="@id/item_feed_vote_counter"
         app:layout_constraintDimensionRatio="W,1:1"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_feed_image_container" />
+
+    <ImageView
+        android:id="@+id/item_feed_star"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintRight_toLeftOf="@+id/item_feed_share_button"
+        app:layout_constraintTop_toBottomOf="@id/item_feed_image_container"
+        app:layout_constraintBottom_toBottomOf="@id/item_feed_vote_counter"
+        app:layout_constraintDimensionRatio="W,1:1"
+        android:layout_marginHorizontal="10dp"
+        />
+
+    <ProgressBar
+        android:id="@+id/star_loading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="5dp"
+        app:layout_constraintBottom_toBottomOf="@id/item_feed_vote_counter"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@id/item_feed_star"
+        app:layout_constraintRight_toRightOf="@id/item_feed_star"
+        app:layout_constraintTop_toTopOf="@id/item_feed_vote_counter"
+        />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

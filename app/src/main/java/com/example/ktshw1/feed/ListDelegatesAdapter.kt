@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import com.example.ktshw1.model.FeedError
 import com.example.ktshw1.model.FeedLoading
+import com.example.ktshw1.model.Subreddit
 import com.example.ktshw1.networking.FeedViewModel
-import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 
 class ListDelegatesAdapter(
@@ -18,6 +18,7 @@ class ListDelegatesAdapter(
         delegatesManager.addDelegate(FeedItemDelegate(
             ::notifyItemChanged,
             feedViewModel::vote,
+            feedViewModel::save,
             share))
         delegatesManager.addDelegate(FeedLoadDelegate())
         delegatesManager.addDelegate(FeedErrorDelegate(feedViewModel::retry))

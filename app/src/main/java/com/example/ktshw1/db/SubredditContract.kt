@@ -17,5 +17,6 @@ object SubredditContract {
         const val NUM_COMMENTS = "num_comments"
         const val PERMALINK = "permalink"
         const val TEXT = "text"
+        const val SAVED = "saved"
     }
 }

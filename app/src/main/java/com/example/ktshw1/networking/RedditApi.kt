@@ -2,7 +2,7 @@ package studio.kts.android.school.lection4.networking.data
 
 import com.example.ktshw1.networking.ServerListingWrapper
 import com.example.ktshw1.networking.ServerResponseWrapper
-import com.example.ktshw1.networking.Subreddit
+import com.example.ktshw1.model.Subreddit
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -30,4 +30,16 @@ interface RedditApi {
             ServerListingWrapper<
                     ServerResponseWrapper<
                             Subreddit>>>
+
+    @FormUrlEncoded
+    @POST("api/save")
+    suspend fun save(
+        @Field("id") id: String
+    ): Response<Any>
+
+    @FormUrlEncoded
+    @POST("api/unsave")
+    suspend fun unsave(
+        @Field("id") id: String
+    ): Response<Any>
 }

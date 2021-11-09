@@ -3,9 +3,7 @@ package com.example.ktshw1.networking
 import Database
 import androidx.lifecycle.*
 import com.example.ktshw1.connection.ConnectionViewModel
-import com.example.ktshw1.model.FeedError
-import com.example.ktshw1.model.FeedLastItem
-import com.example.ktshw1.model.FeedLoading
+import com.example.ktshw1.model.*
 import com.example.ktshw1.utils.SubredditParser
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -36,6 +34,7 @@ class FeedViewModel(
 
     private var currentFeedJob: Job? = null
     private var currentVoteJobs: MutableMap<String, Job> = emptyMap<String, Job>().toMutableMap()
+    private var currentSaveJobs: MutableMap<String, Job> = emptyMap<String, Job>().toMutableMap()
 
     private var after: String = ""
 
@@ -78,6 +77,37 @@ class FeedViewModel(
                     list[index] = ss
                     feedMutableFlow.emit(list)
                     currentVoteJobs.remove(sr.id)
+                }
+            }
+        }
+    }
+
+    fun save(sr: Subreddit) {
+        if (!currentSaveJobs.containsKey(sr.id)) {
+            currentSaveJobs[sr.id]?.cancel()
+            currentSaveJobs[sr.id] = viewModelScope.launch {
+                runCatching {
+                    repository.save(sr.id, !sr.saved)
+                }.onSuccess {
+                    val fLD = feedFlow.value
+                    if (it is Subreddit) {
+                        db.insertFeedItem(it.toSubredditT())
+                        val index = fLD.indexOf(sr)
+                        val list = fLD.toMutableList()
+                        list[index] = it
+                        feedMutableFlow.emit(list)
+                    }
+                    currentSaveJobs.remove(sr.id)
+                }.onFailure {
+                    voteErrorMutable.emit(true)
+                    val fLD = feedFlow.value
+                    val index = fLD.indexOf(sr)
+                    val list = fLD.toMutableList()
+                    val ss = sr.copy()
+                    ss.random_id = UUID.randomUUID()
+                    list[index] = ss
+                    feedMutableFlow.emit(list)
+                    currentSaveJobs.remove(sr.id)
                 }
             }
         }
@@ -235,5 +265,6 @@ class FeedViewModel(
                 }
         }
     }
+
 
 }

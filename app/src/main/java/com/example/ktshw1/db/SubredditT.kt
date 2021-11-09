@@ -3,8 +3,8 @@ package com.example.ktshw1.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.ktshw1.networking.Subreddit
-import com.example.ktshw1.networking.prepare
+import com.example.ktshw1.model.Subreddit
+import com.example.ktshw1.model.prepare
 
 @Entity(
     tableName = SubredditContract.TABLE_NAME,
@@ -34,7 +34,9 @@ data class SubredditT(
     @ColumnInfo(name = SubredditContract.Columns.PERMALINK)
     val permalink: String, //
     @ColumnInfo(name = SubredditContract.Columns.TEXT)
-    val text: String
+    val text: String, //
+    @ColumnInfo(name = SubredditContract.Columns.SAVED)
+    val saved: Boolean
 )
 
 fun SubredditT.toSubreddit() = Subreddit(
@@ -49,5 +51,6 @@ fun SubredditT.toSubreddit() = Subreddit(
         thumbnail = thumbnail,
         num_comments = num_comments,
         permalink = permalink,
-        text = text
+        text = text,
+        saved = saved
     ).prepare()

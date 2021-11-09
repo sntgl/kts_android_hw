@@ -14,7 +14,6 @@ import com.example.ktshw1.databinding.ItemErrorBinding
 import com.example.ktshw1.databinding.ItemFeedMultiBinding
 import com.example.ktshw1.databinding.ItemLoadingBinding
 import com.example.ktshw1.model.*
-import com.example.ktshw1.networking.Subreddit
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import timber.log.Timber
 import kotlin.coroutines.coroutineContext
