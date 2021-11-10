@@ -13,16 +13,16 @@
         <action
             android:id="@+id/action_startFragment_to_onBoardingFragment"
             app:popUpToInclusive="true"
-            app:popUpTo="@id/onBoardingFragment"
+            app:popUpTo="@id/startFragment"
             app:destination="@id/onBoardingFragment" />
         <action
             android:id="@+id/action_startFragment_to_authFragment"
             app:popUpToInclusive="true"
-            app:popUpTo="@id/authFragment"
+            app:popUpTo="@id/startFragment"
             app:destination="@id/authFragment" />
         <action
             app:popUpToInclusive="true"
-            app:popUpTo="@id/mainFragment"
+            app:popUpTo="@id/startFragment"
             android:id="@+id/action_startFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
@@ -35,7 +35,7 @@
         <action
             android:id="@+id/action_onBoardingFragment_to_loginFragment"
             app:destination="@id/authFragment"
-            app:popUpTo="@id/authFragment"
+            app:popUpTo="@id/onBoardingFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
@@ -48,7 +48,7 @@
             android:id="@+id/action_mainFragment_to_authFragment"
             app:destination="@id/authFragment"
             app:popUpToInclusive="true"
-            app:popUpTo="@id/authFragment"
+            app:popUpTo="@id/mainFragment"
             />
     </fragment>
     <fragment
@@ -59,7 +59,7 @@
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
             app:destination="@id/mainFragment"
-            app:popUpTo="@id/mainFragment"
+            app:popUpTo="@id/authFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
