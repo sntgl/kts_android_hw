@@ -18,6 +18,7 @@ import com.bumptech.glide.request.target.Target
 import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.databinding.FragmentProfileBinding
 import com.example.ktshw1.datastore.DatastoreViewModel
+import com.example.ktshw1.model.User
 import com.example.ktshw1.networking.ProfileViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -27,9 +28,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import java.text.DateFormat
 import java.text.DateFormat.getDateInstance
-import java.text.SimpleDateFormat
 
 
 class ProfileFragment() : Fragment(R.layout.fragment_profile) {
@@ -40,24 +39,41 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.profileShareButton.isVisible = false
-
         tryLoad()
+        setupListeners()
+        setupViews()
+    }
 
-        val dispatchersIO = CoroutineScope(Dispatchers.IO)
+    private fun setupViews() {
 
-        binding.profileLogoutButton.setOnClickListener {
-            MaterialAlertDialogBuilder(view.context)
-                .setMessage(getString(R.string.wanna_quit))
-                .setNegativeButton(getString(R.string.Cancel)) { _, _ -> }
-                .setPositiveButton(getString(R.string.Ok)) { _, _ ->
-                    dispatchersIO.launch {
-                        Database.instance.clearAllTables()
-                        datastoreViewModel.clear()
-                    }
+        with(binding) {
+            val context = view?.context
+            if (context != null)
+                profileLogoutButton.setOnClickListener {
+                    MaterialAlertDialogBuilder(context)
+                        .setMessage(getString(R.string.wanna_quit))
+                        .setNegativeButton(getString(R.string.Cancel)) { _, _ -> }
+                        .setPositiveButton(getString(R.string.Ok)) { _, _ ->
+                            CoroutineScope(Dispatchers.IO).launch {
+                                Database.instance.clearAllTables()
+                                datastoreViewModel.clear()
+                            }
+                        }
+                        .show()
                 }
-                .show()
+            profileTryAgainButton.visibility = View.INVISIBLE
+            profileTryAgainButton.setOnClickListener {
+                tryLoad()
+            }
+
+            profileRefresh.setOnRefreshListener {
+                tryLoad()
+            }
+            profileShareButton.isVisible = false
         }
+    }
+
+    private fun setupListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
             connectionViewModel.connectionFlow
                 .filter { it }
@@ -71,77 +87,17 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
             profileViewModel.userError
                 .filter { it }
                 .collect {
-                    profileViewModel.gotUserError()
-                    binding.profileIcon.visibility = View.VISIBLE
-                    binding.profileIcon.setImageResource(R.drawable.ic_baseline_error_outline_24)
-                    binding.profileName.text = getString(R.string.loading_error)
-                    binding.profileProgressBar.isVisible = false
-                    binding.profileTryAgainButton.isVisible = true
-                    binding.profileShareButton.isVisible = false
+                    setError()
                 }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             profileViewModel.userFlow
-                .filter{it != null}
+                .filter { it != null }
                 .collect { user ->
                     if (user == null) return@collect
                     Timber.d("Got user ${user.name}")
-
-                    binding.profileShareButton.setOnClickListener {
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(
-                                Intent.EXTRA_TEXT,
-                                getString(R.string.see_my_profile) +
-                                        "\n" +
-                                        getString(R.string.reddit_base_url) + user.subreddit.url
-                            )
-                        }
-                        startActivity(Intent.createChooser(intent, null))
-                    }
-                    binding.profileShareButton.isVisible = true
-
-                    with(binding) {
-                        profileTryAgainButton.visibility = View.INVISIBLE
-                        profileName.text = user.name
-                        profileCoinsCount.text = user.coins.toString()
-                        profileKarmaCount.text = user.total_karma.toString()
-                        profileDateRegistered.text = getDateInstance().format(user.created_utc * 1000);
-                        profileKarma.isVisible = true
-                        profileCoins.isVisible = true
-
-                        profileProgressBar.visibility = View.VISIBLE
-                        profileIcon.visibility = View.VISIBLE
-                        Glide.with(profileIcon.context)
-                            .load(user.icon_img)
-                            .listener(object : RequestListener<Drawable> {
-                                override fun onLoadFailed(
-                                    e: GlideException?,
-                                    model: Any?,
-                                    target: Target<Drawable>?,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    profileIcon.setImageResource(R.drawable.ic_baseline_error_outline_24)
-                                    profileProgressBar.visibility = View.INVISIBLE
-
-                                    return false
-                                }
-
-                                override fun onResourceReady(
-                                    resource: Drawable?,
-                                    model: Any?,
-                                    target: Target<Drawable>?,
-                                    dataSource: DataSource?,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    profileProgressBar.visibility = View.INVISIBLE
-                                    return false
-                                }
-
-                            })
-                            .into(profileIcon)
-                    }
+                    gotUser(user)
                 }
         }
 
@@ -153,20 +109,90 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
                     findNavController().navigate(R.id.action_mainFragment_to_authFragment)
                 }
         }
-        binding.profileTryAgainButton.visibility = View.INVISIBLE
-        binding.profileTryAgainButton.setOnClickListener {
-            tryLoad()
-        }
+    }
 
+    private fun setError() {
+        binding.profileRefresh.isRefreshing = false
+        profileViewModel.gotUserError()
+        binding.profileIcon.visibility = View.VISIBLE
+        binding.profileIcon.setImageResource(R.drawable.ic_baseline_error_outline_24)
+        binding.profileName.text = getString(R.string.loading_error)
+        binding.profileProgressBar.isVisible = false
+        binding.profileTryAgainButton.isVisible = true
+        binding.profileShareButton.isVisible = false
+    }
+
+    private fun gotUser(user: User) {
+
+        with(binding) {
+            profileRefresh.isRefreshing = false
+            profileKarmaCount.isVisible = true
+            profileCoinsCount.isVisible = true
+            profileTryAgainButton.visibility = View.INVISIBLE
+            profileName.text = user.name
+            profileCoinsCount.text = user.coins.toString()
+            profileKarmaCount.text = user.total_karma.toString()
+            profileDateRegistered.text = getDateInstance().format(user.created_utc * 1000);
+            profileKarma.isVisible = true
+            profileCoins.isVisible = true
+            profileShareButton.setOnClickListener {
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        getString(R.string.see_my_profile) +
+                                "\n" +
+                                getString(R.string.reddit_base_url) + user.subreddit.url
+                    )
+                }
+                startActivity(Intent.createChooser(intent, null))
+            }
+            profileShareButton.isVisible = true
+            profileProgressBar.visibility = View.VISIBLE
+            profileIcon.visibility = View.VISIBLE
+            Glide.with(profileIcon.context)
+                .load(user.icon_img)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        profileIcon.setImageResource(R.drawable.ic_baseline_error_outline_24)
+                        profileProgressBar.visibility = View.INVISIBLE
+
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        profileProgressBar.visibility = View.INVISIBLE
+                        return false
+                    }
+
+                })
+                .into(profileIcon)
+        }
     }
 
     private fun tryLoad() {
         profileViewModel.getId()
-        with (binding) {
+        with(binding) {
             binding.profileShareButton.isVisible = false
             profileName.text = getString(R.string.loading)
             profileIcon.visibility = View.INVISIBLE
             profileProgressBar.isVisible = true
+            profileKarmaCount.isVisible = false
+            profileCoinsCount.isVisible = false
+            profileCoins.isVisible = false
+            profileKarma.isVisible = false
+            profileDateRegistered.isVisible = false
         }
     }
 }
