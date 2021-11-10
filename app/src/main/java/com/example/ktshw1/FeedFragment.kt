@@ -3,15 +3,13 @@ package com.example.ktshw1
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.speech.RecognizerIntent
 import android.view.View
-import android.widget.AdapterView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,16 +18,16 @@ import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.databinding.FragmentFeedBinding
 import com.example.ktshw1.feed.FeedPagination
 import com.example.ktshw1.feed.ListDelegatesAdapter
-import com.example.ktshw1.model.*
+import com.example.ktshw1.model.FeedLoading
+import com.example.ktshw1.model.UserInfo
 import com.example.ktshw1.networking.FeedViewModel
-import timber.log.Timber
 import com.example.ktshw1.utils.autoCleared
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val binding: FragmentFeedBinding by viewBinding(FragmentFeedBinding::bind)
@@ -56,10 +54,13 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         feedViewModel.refreshFeed()
         viewLifecycleOwner.lifecycleScope.launch {
 
-            combine(connectionViewModel.connectionFlow, feedViewModel.isCachedFlow) {
-                conn, cached -> conn to cached
+            combine(
+                connectionViewModel.connectionFlow,
+                feedViewModel.isCachedFlow
+            ) { conn, cached ->
+                conn to cached
             }.collect { (conn, cached) ->
-                Timber.d("Plate: cached = $cached, networkError = $conn" )
+                Timber.d("Plate: cached = $cached, networkError = $conn")
                 if (cached) {
                     showErrorPlate(true, getString(R.string.cached))
                 } else if (!conn) {
@@ -75,6 +76,12 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 binding.feedRefresh.isRefreshing = it
             }
         }
+
+        val color = ContextCompat.getColor(
+            binding.feedRefresh.context,
+            R.color.background_second_colorful
+        )
+        binding.feedRefresh.setColorSchemeColors(color)
 
 
     }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -48,7 +49,9 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
 
         with(binding) {
             val context = view?.context
-            if (context != null)
+            if (context != null) {
+                val color = ContextCompat.getColor(context, R.color.background_second_colorful)
+                profileRefresh.setColorSchemeColors(color)
                 profileLogoutButton.setOnClickListener {
                     MaterialAlertDialogBuilder(context)
                         .setMessage(getString(R.string.wanna_quit))
@@ -61,6 +64,7 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
                         }
                         .show()
                 }
+            }
             profileTryAgainButton.visibility = View.INVISIBLE
             profileTryAgainButton.setOnClickListener {
                 tryLoad()
