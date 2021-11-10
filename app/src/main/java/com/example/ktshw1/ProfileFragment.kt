@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.ktshw1.databinding.FragmentProfileBinding
 import com.example.ktshw1.datastore.DatastoreViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -29,10 +30,18 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
         val scope = CoroutineScope(Dispatchers.IO)
 
         binding.logoutButton.setOnClickListener {
-            scope.launch {
-                Database.instance.clearAllTables()
-                datastoreViewModel.clear()
-            }
+            MaterialAlertDialogBuilder(view.context)
+                .setMessage("Выйти и очистить все данные?")
+                .setNegativeButton("нет") { dialog, which ->
+                    // Respond to negative button press
+                }
+                .setPositiveButton("да") { dialog, which ->
+                    scope.launch {
+                        Database.instance.clearAllTables()
+                        datastoreViewModel.clear()
+                    }
+                }
+                .show()
         }
 
 
@@ -44,5 +53,7 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
                     findNavController().navigate(R.id.action_mainFragment_to_authFragment)
                 }
         }
+
+
     }
 }

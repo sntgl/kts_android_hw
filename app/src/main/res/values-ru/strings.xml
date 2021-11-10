@@ -19,10 +19,20 @@
     <string name="loading_error">Ошибка загрузки</string>
     <string name="tap_to_retry">Нажмите, чтобы попробовать снова\nПодержите, чтобы открыть в браузере</string>
     <string name="vote_error">Не удалось проголосовать!</string>
-    <string name="feed_error">Ошибка подключения. Нажмите, чтобы попробовать снова...</string>
+    <string name="feed_error">Ошибка подключения. Нажмите, чтобы попробовать снова…</string>
     <string name="see_this_post">Посмотри c помощью BReddit!</string>
     <string name="cached">Сабреддиты из кэша</string>
     <string name="network_fail">Сеть недоступна</string>
     <string name="get_more_text">"…показать весь текст "</string>
     <string name="profile">Профиль</string>
+    <string name="minutes_mini">м</string>
+    <string name="hours_mini">ч</string>
+    <string name="days_mini">д</string>
+    <string name="space">" "</string>
+    <string name="ago">назад</string>
+    <string name="feed">Посты</string>
+    <string name="logout">Выйти</string>
+    <string name="wanna_quit">Выйти из аккаунта reddit и стереть все локальные данные?</string>
+    <string name="Ok">OK</string>
+    <string name="Cancel">Отменить</string>
 </resources>

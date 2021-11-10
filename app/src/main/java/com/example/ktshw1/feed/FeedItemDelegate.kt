@@ -1,12 +1,20 @@
 package com.example.ktshw1.feed
 
+import android.content.Intent
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.text.toSpannable
+import androidx.core.view.isVisible
+import androidx.datastore.dataStore
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -15,19 +23,15 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.ktshw1.R
 import com.example.ktshw1.databinding.ItemFeedMultiBinding
-import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
-import timber.log.Timber
-import androidx.core.content.ContextCompat.startActivity
-
-import android.content.Intent
-import android.net.Uri
-import android.text.Spanned
-import android.widget.TextView
-import androidx.core.text.toSpannable
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import com.example.ktshw1.model.Subreddit
 import com.example.ktshw1.utils.ClickToFullTextSpan
+import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
+import timber.log.Timber
+import java.lang.Math.round
+import java.text.DateFormat
+import java.util.*
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 
 class FeedItemDelegate(
@@ -62,7 +66,7 @@ class FeedItemDelegate(
         private val voteVM: (subreddit: Subreddit, newVote: Boolean?) -> Any,
         private val saveVM: (subreddit: Subreddit) -> Any,
         private val share: (url: String) -> Any,
-        ) : RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
         private var feedItem: Subreddit? = null
 
         init {
@@ -106,17 +110,34 @@ class FeedItemDelegate(
                 itemFeedCommentNumber.text = feedItem?.num_comments.toString()
                 itemFeedSubredditName.text = item.subreddit_name
                 itemFeedUserName.text = item.author
-                itemFeedDatePublished.text = item.created.toString()
                 itemFeedTitle.text = item.title
                 itemFeedVoteCounter.text = item.score.toString()
             }
             setButtonColors()
             setVoteLoading()
             setStar()
+            setTime()
+        }
+
+        private fun setTime() {
+            val item = feedItem ?: return
+            val context = binding.itemFeedDatePublished.context
+            val created: Long = (item.created)
+            val minutes = 60.0
+            val hours = minutes * 60.0
+            val days = hours * 24.0
+            val delta = ((System.currentTimeMillis() / 1000) - created).toFloat()
+            binding.itemFeedDatePublished.text = if (delta < hours) {
+                (delta / minutes).roundToInt().toString() + context.getString(R.string.minutes_mini)
+            } else if (delta < days) {
+                (delta / hours).roundToInt().toString() + context.getString(R.string.hours_mini)
+            } else {
+                (delta / days).roundToInt().toString() + context.getString(R.string.days_mini)
+            } + context.getString(R.string.space) + context.getString(R.string.ago)
         }
 
         private fun loadContent(binding: ItemFeedMultiBinding, item: Subreddit) {
-            with (binding) {
+            with(binding) {
                 itemFeedUrl.visibility = View.GONE
                 itemFeedImage.visibility = View.GONE
                 itemFeedProgressbar.visibility = View.GONE
@@ -135,7 +156,8 @@ class FeedItemDelegate(
                         else {
                             //TODO ссылки как в md надо превратить в спаны((
                             val span = ClickToFullTextSpan(itemFeedUrl, item.text)
-                            val spanText = itemFeedUrl.context.getString(R.string.get_more_text) + "(" + item.text.length.toString() + ")"
+                            val spanText =
+                                itemFeedUrl.context.getString(R.string.get_more_text) + "(" + item.text.length.toString() + ")"
                             val spanClickable = (item.textPreview + spanText).toSpannable()
                             spanClickable
                                 .setSpan(
@@ -149,13 +171,14 @@ class FeedItemDelegate(
                         itemFeedUrl.visibility = View.VISIBLE
                     }
                     Subreddit.Content.IMAGE -> loadImage(item)
-                    Subreddit.Content.NONE -> {}
+                    Subreddit.Content.NONE -> {
+                    }
                 }
             }
         }
 
         private fun loadImage(item: Subreddit) {
-            with (binding) {
+            with(binding) {
                 itemFeedProgressbar.visibility = View.VISIBLE
                 itemFeedImage.visibility = View.VISIBLE
                 Glide.with(itemFeedImage.context)

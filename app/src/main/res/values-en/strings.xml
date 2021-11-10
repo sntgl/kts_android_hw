@@ -25,4 +25,14 @@
     <string name="network_fail">Network is unavailable</string>
     <string name="get_more_text">"…show entire text "</string>
     <string name="profile">Profile</string>
+    <string name="minutes_mini">m</string>
+    <string name="hours_mini">h</string>
+    <string name="days_mini">d</string>
+    <string name="space">" "</string>
+    <string name="ago">ago</string>
+    <string name="feed">Feed</string>
+    <string name="logout">Log out</string>
+    <string name="wanna_quit">Log out from your reddit account and erase local data?</string>
+    <string name="Ok">OK</string>
+    <string name="Cancel">Cancel</string>
 </resources>
