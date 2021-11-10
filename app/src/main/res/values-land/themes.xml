@@ -1,0 +1,18 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.KtsHw1" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="android:windowNoTitle">true</item>
+
+        <item name="colorSecondary">@color/background_main_colorful</item>
+        <item name="colorSecondaryVariant">@color/background_main</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorPrimary">@color/background_second_colorful</item>
+        <item name="colorPrimaryVariant">@color/background_second</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/background_main_colorful</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>

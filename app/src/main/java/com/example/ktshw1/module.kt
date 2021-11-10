@@ -8,12 +8,15 @@ import com.example.ktshw1.datastore.DatastoreViewModel
 import com.example.ktshw1.feed.ListDelegatesAdapter
 import com.example.ktshw1.networking.FeedRepository
 import com.example.ktshw1.networking.FeedViewModel
+import com.example.ktshw1.networking.ProfileRepository
+import com.example.ktshw1.networking.ProfileViewModel
 import com.example.ktshw1.repository.AuthRepository
 import com.example.ktshw1.utils.SubredditParser
 import net.openid.appauth.AuthorizationService
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import kotlin.math.sin
 
 val appModule = module {
     single { FeedRepository() }
@@ -29,4 +32,7 @@ val appModule = module {
     single { AuthRepository() }
     factory { AuthorizationService(androidContext()) }
     viewModel { AuthViewModel(get(), get()) }
+
+    single { ProfileRepository() }
+    viewModel { ProfileViewModel(get()) }
 }

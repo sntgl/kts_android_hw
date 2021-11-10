@@ -35,4 +35,8 @@
     <string name="wanna_quit">Выйти из аккаунта reddit и стереть все локальные данные?</string>
     <string name="Ok">OK</string>
     <string name="Cancel">Отменить</string>
+    <string name="karma">Карма</string>
+    <string name="coins">Коины</string>
+    <string name="loading">Загрузка...</string>
+    <string name="try_again">Попробовать снова</string>
 </resources>

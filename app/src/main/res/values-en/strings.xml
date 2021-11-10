@@ -35,4 +35,8 @@
     <string name="wanna_quit">Log out from your reddit account and erase local data?</string>
     <string name="Ok">OK</string>
     <string name="Cancel">Cancel</string>
+    <string name="coins">Coins</string>
+    <string name="karma">Karma</string>
+    <string name="loading">Loading…</string>
+    <string name="try_again">Try again</string>
 </resources>

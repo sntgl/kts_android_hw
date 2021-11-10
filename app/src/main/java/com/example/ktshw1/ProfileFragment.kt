@@ -1,49 +1,132 @@
 package com.example.ktshw1
 
 import Database
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.databinding.FragmentProfileBinding
 import com.example.ktshw1.datastore.DatastoreViewModel
+import com.example.ktshw1.networking.ProfileViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import java.text.DateFormat
+import java.text.DateFormat.getDateInstance
+import java.text.SimpleDateFormat
 
 
 class ProfileFragment() : Fragment(R.layout.fragment_profile) {
     private val datastoreViewModel: DatastoreViewModel by viewModel()
-
+    private val profileViewModel: ProfileViewModel by viewModel()
+    private val connectionViewModel: ConnectionViewModel by viewModel()
     private val binding: FragmentProfileBinding by viewBinding(FragmentProfileBinding::bind)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val scope = CoroutineScope(Dispatchers.IO)
+        tryLoad()
 
-        binding.logoutButton.setOnClickListener {
+        val dispatchersIO = CoroutineScope(Dispatchers.IO)
+
+        binding.profileLogoutButton.setOnClickListener {
             MaterialAlertDialogBuilder(view.context)
-                .setMessage("Выйти и очистить все данные?")
-                .setNegativeButton("нет") { dialog, which ->
-                    // Respond to negative button press
-                }
-                .setPositiveButton("да") { dialog, which ->
-                    scope.launch {
+                .setMessage(getString(R.string.wanna_quit))
+                .setNegativeButton(getString(R.string.Cancel)) { _, _ -> }
+                .setPositiveButton(getString(R.string.Ok)) { _, _ ->
+                    dispatchersIO.launch {
                         Database.instance.clearAllTables()
                         datastoreViewModel.clear()
                     }
                 }
                 .show()
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            connectionViewModel.connectionFlow
+                .filter { it }
+                .collect {
+                    tryLoad()
+                }
+        }
 
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            profileViewModel.userError
+                .filter { it }
+                .collect {
+                    profileViewModel.gotUserError()
+                    binding.profileIcon.visibility = View.VISIBLE
+                    binding.profileIcon.setImageResource(R.drawable.ic_baseline_error_outline_24)
+                    binding.profileName.text = getString(R.string.loading_error)
+                    binding.profileProgressBar.isVisible = false
+                    binding.profileTryAgainButton.isVisible = true
+                }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            profileViewModel.userFlow
+                .filter{it != null}
+                .collect { user ->
+
+                    Timber.d("Got user ${user?.name}")
+                    if (user == null) return@collect
+                    with(binding) {
+                        profileTryAgainButton.visibility = View.INVISIBLE
+                        profileName.text = user.name
+                        profileCoinsCount.text = user.coins.toString()
+                        profileKarmaCount.text = user.total_karma.toString()
+                        profileDateRegistered.text = getDateInstance().format(user.created_utc * 1000);
+                        profileKarma.isVisible = true
+                        profileCoins.isVisible = true
+
+                        profileProgressBar.visibility = View.VISIBLE
+                        profileIcon.visibility = View.VISIBLE
+                        Glide.with(profileIcon.context)
+                            .load(user.icon_img)
+                            .listener(object : RequestListener<Drawable> {
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any?,
+                                    target: Target<Drawable>?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    profileIcon.setImageResource(R.drawable.ic_baseline_error_outline_24)
+                                    profileProgressBar.visibility = View.INVISIBLE
+
+                                    return false
+                                }
+
+                                override fun onResourceReady(
+                                    resource: Drawable?,
+                                    model: Any?,
+                                    target: Target<Drawable>?,
+                                    dataSource: DataSource?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    profileProgressBar.visibility = View.INVISIBLE
+                                    return false
+                                }
+
+                            })
+                            .into(profileIcon)
+                    }
+                }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             datastoreViewModel.onBoardingPassedFlow
@@ -53,7 +136,19 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
                     findNavController().navigate(R.id.action_mainFragment_to_authFragment)
                 }
         }
+        binding.profileTryAgainButton.visibility = View.INVISIBLE
+        binding.profileTryAgainButton.setOnClickListener {
+            tryLoad()
+        }
 
+    }
 
+    private fun tryLoad() {
+        profileViewModel.getId()
+        with (binding) {
+            profileName.text = getString(R.string.loading)
+            profileIcon.visibility = View.INVISIBLE
+            profileProgressBar.isVisible = true
+        }
     }
 }

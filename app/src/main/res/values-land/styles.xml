@@ -3,7 +3,7 @@
 
 
     <style name="BottomNavigationTheme" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/background_main_colorful</item>
-        <item name="backgroundTint">@color/background_second</item>
+        <item name="colorPrimary">@color/background_second_colorful</item>
+        <item name="backgroundTint">@color/background_main_colorful</item>
     </style>
 </resources>
