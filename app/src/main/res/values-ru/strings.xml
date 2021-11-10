@@ -39,4 +39,5 @@
     <string name="coins">Коины</string>
     <string name="loading">Загрузка...</string>
     <string name="try_again">Попробовать снова</string>
+    <string name="see_my_profile">Посмотри мой профиль с помощью BReddit!</string>
 </resources>

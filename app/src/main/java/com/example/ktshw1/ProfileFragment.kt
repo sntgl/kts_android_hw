@@ -1,6 +1,7 @@
 package com.example.ktshw1
 
 import Database
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
@@ -39,6 +40,7 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.profileShareButton.isVisible = false
 
         tryLoad()
 
@@ -75,6 +77,7 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
                     binding.profileName.text = getString(R.string.loading_error)
                     binding.profileProgressBar.isVisible = false
                     binding.profileTryAgainButton.isVisible = true
+                    binding.profileShareButton.isVisible = false
                 }
         }
 
@@ -82,9 +85,23 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
             profileViewModel.userFlow
                 .filter{it != null}
                 .collect { user ->
-
-                    Timber.d("Got user ${user?.name}")
                     if (user == null) return@collect
+                    Timber.d("Got user ${user.name}")
+
+                    binding.profileShareButton.setOnClickListener {
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(
+                                Intent.EXTRA_TEXT,
+                                getString(R.string.see_my_profile) +
+                                        "\n" +
+                                        getString(R.string.reddit_base_url) + user.subreddit.url
+                            )
+                        }
+                        startActivity(Intent.createChooser(intent, null))
+                    }
+                    binding.profileShareButton.isVisible = true
+
                     with(binding) {
                         profileTryAgainButton.visibility = View.INVISIBLE
                         profileName.text = user.name
@@ -146,6 +163,7 @@ class ProfileFragment() : Fragment(R.layout.fragment_profile) {
     private fun tryLoad() {
         profileViewModel.getId()
         with (binding) {
+            binding.profileShareButton.isVisible = false
             profileName.text = getString(R.string.loading)
             profileIcon.visibility = View.INVISIBLE
             profileProgressBar.isVisible = true

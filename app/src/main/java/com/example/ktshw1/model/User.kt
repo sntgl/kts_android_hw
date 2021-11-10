@@ -8,5 +8,6 @@ data class User (
     val name: String, //saniatagilov
     val total_karma: Int, //1
     val created_utc: Float,
-    val coins: Int
+    val coins: Int,
+    val subreddit: SubredditOnlyUrl
 )
