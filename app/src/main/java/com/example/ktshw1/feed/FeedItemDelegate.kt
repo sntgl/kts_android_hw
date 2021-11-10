@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.Spanned
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -168,6 +169,7 @@ class FeedItemDelegate(
                                 )
                             itemFeedUrl.setText(spanClickable, TextView.BufferType.SPANNABLE)
                         }
+                        itemFeedUrl.movementMethod = LinkMovementMethod.getInstance()
                         itemFeedUrl.visibility = View.VISIBLE
                     }
                     Subreddit.Content.IMAGE -> loadImage(item)
