@@ -265,11 +265,11 @@ class FeedItemDelegate(
         private fun setButtonColors() {
             @ColorRes
             val upButtonColor = if (feedItem?.vote == true) R.color.vote
-            else R.color.black
+            else R.color.text_color
 
             @ColorRes
             val downButtonColor = if (feedItem?.vote == false) R.color.vote
-            else R.color.black
+            else R.color.text_color
 
             binding.itemFeedDownButton.setColorFilter(
                 ContextCompat.getColor(binding.root.context, downButtonColor),
