@@ -1,4 +1,4 @@
-# Домашнее задание курса Android от KTS.Studio
+# Курсовой проект по Android (KTS.Studio)
 
 Тагилов Александр, Telegram - [@sntgl](https://t.me/sntgl)
 
