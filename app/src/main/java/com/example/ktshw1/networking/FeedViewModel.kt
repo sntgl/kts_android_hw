@@ -30,6 +30,10 @@ class FeedViewModel(
     val voteError: StateFlow<Boolean>
         get() = voteErrorMutable
 
+    private val saveErrorMutable = MutableStateFlow(false)
+    val saveError: StateFlow<Boolean>
+        get() = saveErrorMutable
+
     private var feedErrorMutable = MutableStateFlow(false)
 
     private var currentFeedJob: Job? = null
@@ -99,7 +103,7 @@ class FeedViewModel(
                     }
                     currentSaveJobs.remove(sr.id)
                 }.onFailure {
-                    voteErrorMutable.emit(true)
+                    saveErrorMutable.emit(true)
                     val fLD = feedFlow.value
                     val index = fLD.indexOf(sr)
                     val list = fLD.toMutableList()
@@ -121,6 +125,10 @@ class FeedViewModel(
 
     fun onHandledVoteError() {
         viewModelScope.launch { voteErrorMutable.emit(false) }
+    }
+
+    fun onHandledSaveError() {
+        viewModelScope.launch { saveErrorMutable.emit(false) }
     }
 
     fun getMoreFeed() {
@@ -264,10 +272,6 @@ class FeedViewModel(
                     getMoreFeed()
                 }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
     }
 
 }

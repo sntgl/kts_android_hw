@@ -38,6 +38,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         createRecycler()
+        feedViewModel.refreshFeed()
+
         Timber.d("Auth token is ${UserInfo.authToken}")
         feedAdapter.items = listOf(FeedLoading())
         viewLifecycleOwner.lifecycleScope.launch {
@@ -45,15 +47,22 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 feedAdapter.items = it
             }
         }
+
         viewLifecycleOwner.lifecycleScope.launch {
             feedViewModel.voteError.filter { it }.collect {
                 feedViewModel.onHandledVoteError()
                 Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
             }
         }
-        feedViewModel.refreshFeed()
-        viewLifecycleOwner.lifecycleScope.launch {
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            feedViewModel.saveError.filter { it }.collect {
+                feedViewModel.onHandledSaveError()
+                Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
             combine(
                 connectionViewModel.connectionFlow,
                 feedViewModel.isCachedFlow
