@@ -1,9 +1,9 @@
 package studio.kts.android.school.lection4.networking.data
 
-import com.example.ktshw1.networking.ServerListingWrapper
-import com.example.ktshw1.networking.ServerResponseWrapper
 import com.example.ktshw1.model.Subreddit
 import com.example.ktshw1.model.User
+import com.example.ktshw1.networking.ServerListingWrapper
+import com.example.ktshw1.networking.ServerResponseWrapper
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -13,9 +13,9 @@ interface RedditApi {
         @Query("after") after: String
     ): Response<
             ServerResponseWrapper<
-                ServerListingWrapper<
-                        ServerResponseWrapper<
-                                Subreddit>>>>
+                    ServerListingWrapper<
+                            ServerResponseWrapper<
+                                    Subreddit>>>>
 
     @FormUrlEncoded
     @POST("api/vote")
@@ -27,7 +27,7 @@ interface RedditApi {
     @GET("api/info")
     suspend fun loadSubreddit(
         @Query("id") id: String
-    ):ServerResponseWrapper<
+    ): ServerResponseWrapper<
             ServerListingWrapper<
                     ServerResponseWrapper<
                             Subreddit>>>

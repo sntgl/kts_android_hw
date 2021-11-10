@@ -40,17 +40,17 @@ data class SubredditT(
 )
 
 fun SubredditT.toSubreddit() = Subreddit(
-        id = id,
-        author = author,
-        created = created,
-        score = score,
-        subreddit_name = subreddit_name,
-        title = title,
-        url = url,
-        vote = vote,
-        thumbnail = thumbnail,
-        num_comments = num_comments,
-        permalink = permalink,
-        text = text,
-        saved = saved
-    ).prepare()
+    id = id,
+    author = author,
+    created = created,
+    score = score,
+    subreddit_name = subreddit_name,
+    title = title,
+    url = url,
+    vote = vote,
+    thumbnail = thumbnail,
+    num_comments = num_comments,
+    permalink = permalink,
+    text = text,
+    saved = saved
+).prepare()

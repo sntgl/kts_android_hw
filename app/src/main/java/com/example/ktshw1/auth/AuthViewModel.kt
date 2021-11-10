@@ -14,7 +14,7 @@ import timber.log.Timber
 
 class AuthViewModel(
     private val authRepository: AuthRepository,
-    private var authService : AuthorizationService,
+    private var authService: AuthorizationService,
 ) : ViewModel() {
 
     private val openAuthPageLiveEvent = SingleLiveEvent<Intent>()

@@ -7,13 +7,12 @@
         android:id="@+id/bottomNavigationFeed"
         android:name="com.example.ktshw1.FeedFragment"
         android:label="Feed"
-        tools:layout="@layout/fragment_feed"
-        />
+        tools:layout="@layout/fragment_feed" />
 
     <fragment
         android:id="@+id/bottomNavigationProfile"
         android:name="com.example.ktshw1.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile"/>
+        tools:layout="@layout/fragment_profile" />
 
 </navigation>

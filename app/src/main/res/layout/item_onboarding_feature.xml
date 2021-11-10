@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:layout_height="400dp"
-    tools:layout_width="match_parent"
-    >
+    tools:layout_width="match_parent">
+
     <ImageView
         android:id="@+id/item_onboarding_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        tools:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:padding="10dp"
         android:src="@drawable/ic_baseline_share_24"
+        app:layout_constraintBottom_toTopOf="@id/item_onboarding_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        app:layout_constraintBottom_toTopOf="@id/item_onboarding_text"/>
+        tools:layout_gravity="center" />
+
     <TextView
         android:id="@+id/item_onboarding_text"
         android:layout_width="0dp"
-        android:padding="10dp"
-        android:layout_margin="10dp"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item_onboarding_image"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:gravity="center"
-        android:textSize="30sp"
-        tools:text="Feature description here"/>
+        app:layout_constraintTop_toBottomOf="@id/item_onboarding_image"
+        tools:text="Feature description here" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

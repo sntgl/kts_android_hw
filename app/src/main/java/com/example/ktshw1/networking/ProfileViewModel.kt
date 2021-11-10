@@ -2,9 +2,7 @@ package com.example.ktshw1.networking
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ktshw1.connection.ConnectionViewModel
 import com.example.ktshw1.model.User
-import com.example.ktshw1.utils.SubredditParser
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

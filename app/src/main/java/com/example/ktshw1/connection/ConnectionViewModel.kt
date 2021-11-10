@@ -18,10 +18,10 @@ class ConnectionViewModel(
         get() = connectionFlowMutable
 
     private val internalConnectionFlow = flow {
-            while (true) {
-                emit(repository.checkConnection())
-                delay(DELAY)
-            }
+        while (true) {
+            emit(repository.checkConnection())
+            delay(DELAY)
+        }
     }.onStart {
         Timber.d("Connection flow started, delay = $DELAY")
     }.distinctUntilChanged()

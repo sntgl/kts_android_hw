@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.text.toSpannable
 import androidx.core.view.isVisible
-import androidx.datastore.dataStore
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -28,10 +27,7 @@ import com.example.ktshw1.model.Subreddit
 import com.example.ktshw1.utils.ClickToFullTextSpan
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import timber.log.Timber
-import java.lang.Math.round
-import java.text.DateFormat
 import java.util.*
-import kotlin.math.round
 import kotlin.math.roundToInt
 
 

@@ -20,7 +20,8 @@ object Networking {
             val request = chain.request()
             val authenticatedRequest = request.newBuilder()
                 .header("Authorization", "bearer ${UserInfo.authToken}").build()
-            return@addInterceptor chain.proceed(authenticatedRequest) }
+            return@addInterceptor chain.proceed(authenticatedRequest)
+        }
         .retryOnConnectionFailure(true)
         .build()
 

@@ -22,6 +22,7 @@ class DatastoreRepository(
     suspend fun passOnBoarding() {
         dataStore.edit { it[ONBOARDING_PASSED] = true }
     }
+
     fun isOnBoardingPassed(): Flow<Boolean?> = dataStore.data.map { it[ONBOARDING_PASSED] }
 
     suspend fun redditTokenReceived(token: String?, refresh: String?, expires: Long?) {
@@ -33,7 +34,7 @@ class DatastoreRepository(
         }
     }
 
-    fun getRedditToken(): Flow<String?> = dataStore.data.onEach{
+    fun getRedditToken(): Flow<String?> = dataStore.data.onEach {
         if (it[REDDIT_API_KEY] != null) UserInfo.authToken = it[REDDIT_API_KEY]
         if (it[REDDIT_REFRESH_KEY] != null) UserInfo.refreshToken = it[REDDIT_REFRESH_KEY]
         if (it[REDDIT_EXPIRES_KEY] != null) UserInfo.expires = it[REDDIT_EXPIRES_KEY]

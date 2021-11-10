@@ -8,7 +8,7 @@ import timber.log.Timber
 class ClickToFullTextSpan(
     private val textView: TextView,
     private val fullText: String
-): ClickableSpan() {
+) : ClickableSpan() {
     override fun onClick(widget: View) {
         Timber.d("Clicked on span!! I need full text!!!")
         textView.text = fullText

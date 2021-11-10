@@ -11,15 +11,17 @@ import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 class ListDelegatesAdapter(
     private val feedViewModel: FeedViewModel,
     share: (url: String) -> Any
-)
-    : AsyncListDifferDelegationAdapter<Any>(DiffCallback()) {
+) : AsyncListDifferDelegationAdapter<Any>(DiffCallback()) {
 
     init {
-        delegatesManager.addDelegate(FeedItemDelegate(
-            ::notifyItemChanged,
-            feedViewModel::vote,
-            feedViewModel::save,
-            share))
+        delegatesManager.addDelegate(
+            FeedItemDelegate(
+                ::notifyItemChanged,
+                feedViewModel::vote,
+                feedViewModel::save,
+                share
+            )
+        )
         delegatesManager.addDelegate(FeedLoadDelegate())
         delegatesManager.addDelegate(FeedErrorDelegate(feedViewModel::retry))
     }

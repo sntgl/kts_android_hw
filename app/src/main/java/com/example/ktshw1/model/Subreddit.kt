@@ -1,11 +1,8 @@
 package com.example.ktshw1.model
 
-import androidx.core.text.HtmlCompat
 import com.example.ktshw1.db.SubredditT
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import java.util.*
 
 @JsonClass(generateAdapter = true)
@@ -53,40 +50,41 @@ fun Subreddit.prepare(): Subreddit {
         if (item.text.length > 200) {
             item.textPreview = item.text.substring(0, 199)
             item.isTextPreviewed = true
-        } else if (item.text.count {"\n".contains(it)} > 3) {
+        } else if (item.text.count { "\n".contains(it) } > 3) {
             item.textPreview = item.text.substringBefore("\n")
             item.isTextPreviewed = true
         }
     }
 
     item.content_type = if (item.url.endsWith(".jpg", true) ||
-            item.url.endsWith(".jpeg", true) ||
-            item.url.endsWith(".png", true) ||
-            item.url.contains("imgur.com", true)
-        )
-            Subreddit.Content.IMAGE
-        else if (!(item.url.contains("/comments/") &&
-                    item.url.contains("reddit.com")) &&
-                    item.url != "self")
-            Subreddit.Content.URL
-        else if (item.text != "")
-            Subreddit.Content.TEXT
-        else Subreddit.Content.NONE
+        item.url.endsWith(".jpeg", true) ||
+        item.url.endsWith(".png", true) ||
+        item.url.contains("imgur.com", true)
+    )
+        Subreddit.Content.IMAGE
+    else if (!(item.url.contains("/comments/") &&
+                item.url.contains("reddit.com")) &&
+        item.url != "self"
+    )
+        Subreddit.Content.URL
+    else if (item.text != "")
+        Subreddit.Content.TEXT
+    else Subreddit.Content.NONE
     return item
 }
 
 fun Subreddit.toSubredditT() = SubredditT(
-        id = id,
-        author = author,
-        created = created,
-        score = score,
-        subreddit_name = subreddit_name,
-        title = title,
-        url = url,
-        vote = vote,
-        thumbnail = thumbnail,
-        num_comments = num_comments,
-        permalink = permalink,
-        text = text,
-        saved = saved
-    )
+    id = id,
+    author = author,
+    created = created,
+    score = score,
+    subreddit_name = subreddit_name,
+    title = title,
+    url = url,
+    vote = vote,
+    thumbnail = thumbnail,
+    num_comments = num_comments,
+    permalink = permalink,
+    text = text,
+    saved = saved
+)

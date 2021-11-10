@@ -4,4 +4,4 @@ import java.util.*
 
 data class FeedLoading(
     val id: UUID = UUID.randomUUID()
-): FeedLastItem()
+) : FeedLastItem()

@@ -3,17 +3,17 @@ package com.example.ktshw1.networking
 import Networking.okhttpAuthClient
 import android.util.Base64
 import com.example.ktshw1.BuildConfig
-import com.example.ktshw1.model.UserInfo
 import com.example.ktshw1.datastore.DatastoreViewModel
+import com.example.ktshw1.model.UserInfo
 import com.example.ktshw1.repository.AuthRepository
 import okhttp3.FormBody
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.json.JSONObject
 import org.json.JSONTokener
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 
 class RefreshingInterceptor : Interceptor, KoinComponent {
@@ -31,7 +31,7 @@ class RefreshingInterceptor : Interceptor, KoinComponent {
             val basicAuth = "Basic " + Base64.encodeToString(
                 "${AuthRepository.CLIENT_ID}:".toByteArray(),
                 Base64.NO_WRAP
-            );
+            )
             val body = FormBody.Builder()
                 .add("grant_type", "refresh_token")
                 .add("refresh_token", UserInfo.refreshToken ?: "")

@@ -17,24 +17,23 @@
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline_h_top"
-        />
+        app:layout_constraintTop_toTopOf="@id/guideline_h_top" />
+
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/onboarding_viewpager"
         app:layout_constraintLeft_toLeftOf="@id/guideline_w_start"
         app:layout_constraintRight_toRightOf="@id/guideline_w_end"
-        >
+        app:layout_constraintTop_toBottomOf="@id/onboarding_viewpager">
+
         <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
             android:id="@+id/onboarding_viewpager_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            app:spi_looped="true"
             app:spi_dotColor="@color/background_second"
             app:spi_dotSize="10dp"
-            />
+            app:spi_looped="true" />
 
     </FrameLayout>
 

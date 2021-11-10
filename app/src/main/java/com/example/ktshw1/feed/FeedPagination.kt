@@ -11,7 +11,7 @@ class FeedPagination(
     private val visibilityThreshold: Int = DEFAULT_VISIBILITY_THRESHOLD
 ) : RecyclerView.OnScrollListener() {
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-        with (layoutManager) {
+        with(layoutManager) {
             if (dy <= 0) return
 
             val scrolledOffItems = findFirstVisibleItemPosition()
@@ -26,6 +26,7 @@ class FeedPagination(
             }
         }
     }
+
     companion object {
         const val DEFAULT_VISIBILITY_THRESHOLD = 5
     }

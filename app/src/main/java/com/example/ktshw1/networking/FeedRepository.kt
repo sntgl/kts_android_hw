@@ -1,5 +1,6 @@
 package com.example.ktshw1.networking
-import android.net.Network
+
+import Networking
 import com.example.ktshw1.model.Subreddit
 import com.example.ktshw1.model.prepare
 
